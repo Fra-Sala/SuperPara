@@ -11,7 +11,9 @@ from scipy.integrate import odeint
 
 from matplotlib import pyplot as plt
 
-
+GAMMA = 1.4
+R_AIR = 287
+GRAVITY = 9.81
 
 # altitude = 60  # [km] altitude of initial deployment
 # coesa76_altitude = coesa76(altitude)
@@ -80,59 +82,56 @@ def cd_hemisflo(mach):
     return cd
 
 
-t_infl = 1e5 # mock time of inflation of the parachute
+t_infl = 1e10 # mock times-tamp for the deployment of the parachute
 flag = 0
-coeff_infl = 0
+slope_infl = 0
 delta_t_infl = 0
 
+def compute_dragArea_chute(t,h,v,h_deploy):
+
+    h76 = coesa76(h/1000)
+    rho = h76.rho
+    temp = h76.T
+    mach = v / np.sqrt(GAMMA * R_AIR * temp)
+
+    lambda_t = 25  # total porosity
+    cd_chute = cd_hemisflo(mach)
+    global slope_infl
+    global delta_t_infl
+    global t_infl
+
+    drag_area = 0.0
+    if h <= h_deploy:   # if we have reached the altitude of deployment
+        global flag
+        if flag == 0:
+            t_infl = t
+            delta_t_infl = (8*np.sqrt(4* S_chute / np.pi)/(np.abs(v)**0.9)) #0.65 * lambda_t * np.sqrt(4 * S_chute / np.pi) / np.abs(v)
+            print(delta_t_infl)
+            flag = 1
+            slope_infl = (cd_chute * S_chute) / delta_t_infl
+
+        if t-t_infl <= delta_t_infl:        # if the chute is inflating
+            drag_area = slope_infl*(t-t_infl)
+        else:
+            drag_area = cd_chute*S_chute
+
+
+    return drag_area
 
 def model(y,t, cd0_rocket, h_deploy, S_chute, S_rocket):
     # y = [h, v], where v = dh/dt
     h,v = y
     m = 20   # kg
     h76 = coesa76(h/1000)   #change the altitude to km
-    gamma = 1.4
-    R_air = 287
-    g = 9.81
+
     rho = h76.rho
     temp = h76.T
-    mach = v/np.sqrt(gamma*R_air*temp)
+    mach = v/np.sqrt(GAMMA*R_AIR*temp)
 
-    lambda_t = 25 # total porosity
-
-    global t_infl
-    global flag
-    global coeff_infl
-    global delta_t_infl
-
-    print(t_infl)
-    print(flag)
-    if h >= h_deploy:
-        cd_chute = 0.0           # do not take the drag of the parachute into account
-
-    else:
-        cd_chute = cd_hemisflo(mach)   # take the parachute into account
-        if flag == 0:
-            t_infl = t
-
-            # delta_t_infl = 0.65 * lambda_t * np.sqrt(4*S_chute/np.pi) / np.abs( v)*1000
-            delta_t_infl = 8*np.sqrt(4*S_chute/np.pi) /(np.abs(v)**0.9)
-            coeff_infl = (cd_chute*S_chute) / delta_t_infl  # slope of the drag-area vs time curve at inflation
-            flag = 1
-    print("here the delta of inflation: ",delta_t_infl)
-    print("Here the coeff_infl", coeff_infl)
-
-    if (t >= t_infl) and (t < (t_infl + delta_t_infl)):  # if the parachute is opening
-        drag_area = coeff_infl*(t-t_infl)
-        print("here the drag area is (opening)", drag_area)
-        print(t)
-    else:
-        drag_area = cd_chute*S_chute
-        print("here the drag area is (not opening)", drag_area)
     cd_rocket = (cd0_rocket - 0.2605)*np.exp(0.73 * mach) + 0.2605  # exponential law for the drag of the rocket at a given mach number
+    drag_area = compute_dragArea_chute(t,h,v,h_deploy)
 
-
-    dydt = [v, 1/m*(1/2*rho*(v**2)*S_rocket*(cd_rocket)+ 1/2*rho*(v**2)*drag_area - m*g)]
+    dydt = [v, 1/m*(1/2*rho*(v**2)*S_rocket*(cd_rocket)+ 1/2*rho*(v**2)*drag_area - m*GRAVITY)]
 
 
     return dydt
@@ -141,37 +140,60 @@ def model(y,t, cd0_rocket, h_deploy, S_chute, S_rocket):
 S_chute = 0.2
 S_rocket = 0.02
 cd0_rocket = 0.55
-h_deploy = 10e3  #let s deploy the chute at h = 4 km
-y0 = [ 100e3, 0]   # inital altitude, intial velocity
-t = np.linspace(0,150,10000)  #seconds
+
+def dynamics_simulation(h_deploy):
 
 
-result = odeint(model,y0,t, args=( cd0_rocket, h_deploy, S_chute, S_rocket))
-h = result[:,0]
-v = result[:,1]
+    #h_deploy = 3e3  #let s deploy the chute at h = 4 km
+    y0 = [ 100e3, 0]   # inital altitude, intial velocity
+    t = np.linspace(0,150,1000)  #seconds
+
+    result = odeint(model,y0,t, args=( cd0_rocket, h_deploy, S_chute, S_rocket))
+    h = result[:,0]
+    v = result[:,1]
+
+    global slope_infl
+    global delta_t_infl
+    global t_infl
+    global flag
+    slope_infl = 0.0
+    delta_t_infl = 0.0
+    t_infl = 1e5
+    flag = 0
+
+    accel = (v[1:]-v[0:-1])/(t[1]-t[0])
 # Plot
-plt.subplot(221)
-plt.plot(t, h, "--")
-plt.title("Altitude vs time")
-plt.grid()
-plt.tight_layout()
+# plt.subplot(221)
+# plt.plot(t, h, "--")
+# plt.title("Altitude vs time")
+# plt.grid()
+# plt.tight_layout()
+#
+#
+# plt.subplot(222)
+# plt.plot(t,v, "--")
+# plt.title("Velocity magnitude vs time")
+# plt.grid()
+# plt.tight_layout()
+# # let us know approximatly the acceleration experienced by the rocket a_i = v_i+1-v_i/t_h
+#
+# plt.subplot(223)
+# plt.plot(t[0:-1],-accel/9.81, "--")
+# plt.title("g's vs time (positive downward)")
+# plt.grid()
+# plt.show()
 
 
-plt.subplot(222)
-plt.plot(t,v, "--")
-plt.title("Velocity magnitude vs time")
-plt.grid()
-plt.tight_layout()
-# let us know approximatly the acceleration experienced by the rocket a_i = v_i+1-v_i/t_h
-
-accel = (v[1:]-v[0:-1])/(t[1]-t[0])
-
-plt.subplot(223)
-plt.plot(t[0:-1],-accel/9.81, "--")
-plt.title("g's vs time (positive downward)")
-plt.grid()
-plt.show()
+    return max(abs(accel))
 
 
 
+# h_vec = np.arange(4e3, 9e3, 1000)
+# a = np.zeros_like(h_vec)
+# for i in range(0, len(h_vec)):
+#     a[i] = dynamics_simulation(h_vec[i])
 
+h_vec = np.arange(4e3, 4e9, 1000)
+a = np.zeros_like(h_vec)
+
+plt.plot(h_vec, a, linewidth=2)
