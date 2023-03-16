@@ -1,11 +1,18 @@
+import numpy as np
+
+
 class Rocket:
 
-    def __init__(self, mass, diameter):
+    def __init__(self, cd0, mass, cross_section):
+        """Constructor for object Rocket"""
+
+        self.cd0 = cd0
+        self.cd = cd0
         self.mass = mass
-        self.diameter = diameter
-        self.cd = 0.2
-    def compute_cD(self):
+        self.cross_section = cross_section
 
-        cd = 0.2*1
-        self.cd = cd
+    def compute_cd_rocket(self,mach):
+        """This function computes cD_rocket as a function of Mach number. For details,
+            see documentation"""
 
+        self.cd = (self.cd0- 0.2605) * np.exp(0.73 *mach) + 0.2605
