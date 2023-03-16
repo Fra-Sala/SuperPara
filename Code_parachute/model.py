@@ -6,7 +6,7 @@ from parachute import Parachute
 
 
 
-def model(y, t, drogueObj, rocketObj):
+def model(t,y, drogueObj, rocketObj):
 
     z, vz, x, vx = y  # retrieve current values of z, vz, x, vx
     z76 = coesa76(z / 1000)  # change the altitude to km

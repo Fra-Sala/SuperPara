@@ -3,7 +3,7 @@ from pyatmos import coesa76
 import numpy as np
 from parachute import Parachute
 from rocket import Rocket
-from scipy.integrate import odeint
+from scipy.integrate import solve_ivp
 from model import model
 
 class DynamicsReentry:
@@ -34,12 +34,20 @@ class DynamicsReentry:
     def solve_dynamics(self, ):
         y0 = [self.z_vect[0], self.vz_vect[0], self.x_vect[0], self.vx_vect[0]]
 
+        def hit_ground(t,y, arg1, arg2):
 
-        result = odeint(model, y0, self.t_vect, args=(self.drogue, self.rocket))
-        self.z_vect = result[:, 0]
-        self.vz_vect = result[:, 1]
-        self.x_vect = result[:, 2]
-        self.vx_vect = result[:, 3]
+            return y[0]
+
+
+        hit_ground.terminal = True
+
+
+        result = solve_ivp(model, [self.t_vect[0], self.t_vect[-1]], y0, events=hit_ground, args=(self.drogue, self.rocket), method='LSODA', first_step = 0.01, max_step = 0.02)
+        self.t_vect = result.t
+        self.z_vect = result.y[0,:]
+        self.vz_vect = result.y[1,:]
+        self.x_vect = result.y[2,:]
+        self.vx_vect = result.y[3,:]
         self.az_vect = (self.vz_vect[1:] - self.vz_vect[0:-1]) / (self.t_vect[1] - self.t_vect[0]) #approzimation of the acceleration
         self.ax_vect= (self.vx_vect[1:] - self.vx_vect[0:-1]) / (self.t_vect[1] - self.t_vect[0])
         self.g_vect = -self.az_vect/GRAVITY
