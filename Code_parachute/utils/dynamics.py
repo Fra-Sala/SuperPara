@@ -28,7 +28,6 @@ class DynamicsReentry:
         self.rocket = rocket_obj
         self.az_vect = []
         self.ax_vect = []
-        self.g_vect = []
 
 
     def solve_dynamics(self, ):
@@ -42,5 +41,4 @@ class DynamicsReentry:
         self.vx_vect = result[:, 3]
         self.az_vect = (self.vz_vect[1:] - self.vz_vect[0:-1]) / (self.t_vect[1] - self.t_vect[0]) #approzimation of the acceleration
         self.ax_vect= (self.vx_vect[1:] - self.vx_vect[0:-1]) / (self.t_vect[1] - self.t_vect[0])
-        self.g_vect = -self.az_vect/GRAVITY
 
