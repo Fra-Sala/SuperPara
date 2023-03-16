@@ -3,7 +3,8 @@ from matplotlib import animation
 from dynamics import DynamicsReentry
 from matplotlib import rc
 from dynamics import DynamicsReentry
-from parachute import Drogue
+from parachute import Parachute
+from drogue import Drogue
 from pyatmos import coesa76
 from constants import *
 import numpy as np

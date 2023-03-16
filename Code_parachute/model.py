@@ -2,7 +2,8 @@ from constants import *
 from pyatmos import coesa76
 import numpy as np
 from rocket import Rocket
-from parachute import Drogue
+from parachute import Parachute
+
 
 
 def model(y, t, drogueObj, rocketObj):

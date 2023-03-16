@@ -1,0 +1,133 @@
+\hypertarget{classdrogue_1_1_drogue}{}\doxysection{drogue.\+Drogue Class Reference}
+\label{classdrogue_1_1_drogue}\index{drogue.Drogue@{drogue.Drogue}}
+
+
+Inheritance diagram for drogue.\+Drogue\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=196pt]{classdrogue_1_1_drogue__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for drogue.\+Drogue\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=196pt]{classdrogue_1_1_drogue__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \mbox{\hyperlink{classdrogue_1_1_drogue_aef366cdeb5e62353e17c7c95d7078aed}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, cd0\+\_\+parachute, z\+\_\+deploy, s\+\_\+chute, lambda\+\_\+t, x1\+\_\+factor=0.\+95, cx\+\_\+factor=1.\+25)
+\item 
+def \mbox{\hyperlink{classdrogue_1_1_drogue_ab7bd295b7776f2594b077f42dd7d23fb}{compute\+\_\+cd\+\_\+drogue}} (self, mach)
+\item 
+def \mbox{\hyperlink{classdrogue_1_1_drogue_a443e8a999fed0342acd664bf4aa7dc3c}{compute\+\_\+delta\+\_\+t\+\_\+infl}} (self, v)
+\item 
+def \mbox{\hyperlink{classdrogue_1_1_drogue_a51f45d976fd2dc2d3e557ae0cc9d84bc}{compute\+\_\+drag\+Area\+\_\+chute}} (self, t, z, v, mach)
+\item 
+def \mbox{\hyperlink{classdrogue_1_1_drogue_a2f9a884a81003bacf177bf9d3ef65f67}{compute\+\_\+opening\+\_\+load}} (self, t, z, v, mach)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classdrogue_1_1_drogue_aa21cded6a8878d83e2426f5198a899fe}\label{classdrogue_1_1_drogue_aa21cded6a8878d83e2426f5198a899fe}} 
+{\bfseries cd}
+\item 
+\mbox{\Hypertarget{classdrogue_1_1_drogue_a44cb3ca9836a660ccfda25fdc72da434}\label{classdrogue_1_1_drogue_a44cb3ca9836a660ccfda25fdc72da434}} 
+{\bfseries delta\+\_\+t\+\_\+infl}
+\item 
+\mbox{\Hypertarget{classdrogue_1_1_drogue_aa5a82716a3ee41f4b724906c322b8622}\label{classdrogue_1_1_drogue_aa5a82716a3ee41f4b724906c322b8622}} 
+{\bfseries flag\+\_\+infl}
+\item 
+\mbox{\Hypertarget{classdrogue_1_1_drogue_aa1c7dfc45ed080398962d18da8d4fdb5}\label{classdrogue_1_1_drogue_aa1c7dfc45ed080398962d18da8d4fdb5}} 
+{\bfseries t\+\_\+infl}
+\item 
+\mbox{\Hypertarget{classdrogue_1_1_drogue_a0994052011779b5720ed03acb7cd7edc}\label{classdrogue_1_1_drogue_a0994052011779b5720ed03acb7cd7edc}} 
+{\bfseries slope\+\_\+infl}
+\item 
+\mbox{\Hypertarget{classdrogue_1_1_drogue_a6cb2a9297d2869e1e550899020b2394a}\label{classdrogue_1_1_drogue_a6cb2a9297d2869e1e550899020b2394a}} 
+{\bfseries drag\+\_\+area}
+\item 
+\mbox{\Hypertarget{classdrogue_1_1_drogue_a0dd3ff83418b6747ca04f12535605352}\label{classdrogue_1_1_drogue_a0dd3ff83418b6747ca04f12535605352}} 
+{\bfseries opening\+\_\+force}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Class Drogue. It contains all the parameters that characterize the preliminary design of the hemisflo drouge parachute\end{DoxyVerb}
+ 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classdrogue_1_1_drogue_aef366cdeb5e62353e17c7c95d7078aed}\label{classdrogue_1_1_drogue_aef366cdeb5e62353e17c7c95d7078aed}} 
+\index{drogue.Drogue@{drogue.Drogue}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!drogue.Drogue@{drogue.Drogue}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def drogue.\+Drogue.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{cd0\+\_\+parachute,  }\item[{}]{z\+\_\+deploy,  }\item[{}]{s\+\_\+chute,  }\item[{}]{lambda\+\_\+t,  }\item[{}]{x1\+\_\+factor = {\ttfamily 0.95},  }\item[{}]{cx\+\_\+factor = {\ttfamily 1.25} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Constuctor for object Parachute\end{DoxyVerb}
+ 
+
+Reimplemented from \mbox{\hyperlink{classparachute_1_1_parachute_a6324cbd8caad7a0dbdcc151a27099485}{parachute.\+Parachute}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classdrogue_1_1_drogue_ab7bd295b7776f2594b077f42dd7d23fb}\label{classdrogue_1_1_drogue_ab7bd295b7776f2594b077f42dd7d23fb}} 
+\index{drogue.Drogue@{drogue.Drogue}!compute\_cd\_drogue@{compute\_cd\_drogue}}
+\index{compute\_cd\_drogue@{compute\_cd\_drogue}!drogue.Drogue@{drogue.Drogue}}
+\doxysubsubsection{\texorpdfstring{compute\_cd\_drogue()}{compute\_cd\_drogue()}}
+{\footnotesize\ttfamily def drogue.\+Drogue.\+compute\+\_\+cd\+\_\+drogue (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{mach }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb} This function returns a plausible value of the drag coefficient for a hemisflo drogue parachute
+        operating at M >> 0.3 (compressibility effects not negligible). The implemented law
+         is taken from the plot in "Parachute recovery systems design manual", Section 5\end{DoxyVerb}
+ 
+
+Reimplemented from \mbox{\hyperlink{classparachute_1_1_parachute}{parachute.\+Parachute}}.
+
+\mbox{\Hypertarget{classdrogue_1_1_drogue_a443e8a999fed0342acd664bf4aa7dc3c}\label{classdrogue_1_1_drogue_a443e8a999fed0342acd664bf4aa7dc3c}} 
+\index{drogue.Drogue@{drogue.Drogue}!compute\_delta\_t\_infl@{compute\_delta\_t\_infl}}
+\index{compute\_delta\_t\_infl@{compute\_delta\_t\_infl}!drogue.Drogue@{drogue.Drogue}}
+\doxysubsubsection{\texorpdfstring{compute\_delta\_t\_infl()}{compute\_delta\_t\_infl()}}
+{\footnotesize\ttfamily def drogue.\+Drogue.\+compute\+\_\+delta\+\_\+t\+\_\+infl (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{v }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb} This method computes the delta of time required for full inflation. The empirical formula is taken from
+    Knacke's book, for a ribbon parachute.\end{DoxyVerb}
+ 
+
+Reimplemented from \mbox{\hyperlink{classparachute_1_1_parachute}{parachute.\+Parachute}}.
+
+\mbox{\Hypertarget{classdrogue_1_1_drogue_a51f45d976fd2dc2d3e557ae0cc9d84bc}\label{classdrogue_1_1_drogue_a51f45d976fd2dc2d3e557ae0cc9d84bc}} 
+\index{drogue.Drogue@{drogue.Drogue}!compute\_dragArea\_chute@{compute\_dragArea\_chute}}
+\index{compute\_dragArea\_chute@{compute\_dragArea\_chute}!drogue.Drogue@{drogue.Drogue}}
+\doxysubsubsection{\texorpdfstring{compute\_dragArea\_chute()}{compute\_dragArea\_chute()}}
+{\footnotesize\ttfamily def drogue.\+Drogue.\+compute\+\_\+drag\+Area\+\_\+chute (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{t,  }\item[{}]{z,  }\item[{}]{v,  }\item[{}]{mach }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb} This method computes the product cD*S of the parachute during the inflation and after it.
+    A linear inflation is supposed to take place.\end{DoxyVerb}
+ 
+
+Reimplemented from \mbox{\hyperlink{classparachute_1_1_parachute}{parachute.\+Parachute}}.
+
+\mbox{\Hypertarget{classdrogue_1_1_drogue_a2f9a884a81003bacf177bf9d3ef65f67}\label{classdrogue_1_1_drogue_a2f9a884a81003bacf177bf9d3ef65f67}} 
+\index{drogue.Drogue@{drogue.Drogue}!compute\_opening\_load@{compute\_opening\_load}}
+\index{compute\_opening\_load@{compute\_opening\_load}!drogue.Drogue@{drogue.Drogue}}
+\doxysubsubsection{\texorpdfstring{compute\_opening\_load()}{compute\_opening\_load()}}
+{\footnotesize\ttfamily def drogue.\+Drogue.\+compute\+\_\+opening\+\_\+load (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{t,  }\item[{}]{z,  }\item[{}]{v,  }\item[{}]{mach }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}This computatiion is based on Knacke's work \end{DoxyVerb}
+ 
+
+Reimplemented from \mbox{\hyperlink{classparachute_1_1_parachute}{parachute.\+Parachute}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+drogue.\+py\end{DoxyCompactItemize}

@@ -1,5 +1,6 @@
 from rocket import Rocket
-from parachute import Drogue
+from parachute import Parachute
+from drogue import Drogue
 from dynamics import DynamicsReentry
 from plotanimate import PlotAnimate
 import matplotlib as mpl
