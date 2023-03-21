@@ -40,7 +40,6 @@ class PlotAnimate:
         plt.ylabel(r'$z$ [m]')
         plt.grid()
 
-
         plt.subplot(133)
         plt.plot(self.dynamics.x_vect, self.dynamics.z_vect, "r--", lw=2)
         plt.title(r'Falling trajectory')
@@ -80,8 +79,6 @@ class PlotAnimate:
         plt.grid()
         plt.show()
 
-
-
     def animate_reentry(self, speed=20):
         fig2 = plt.figure(2)
         ax = plt.axes(xlim=(0, self.dynamics.z_vect[0]),
@@ -107,6 +104,8 @@ class PlotAnimate:
             i = i * speed
             if (self.dynamics.t_vect[i] > self.dynamics.drogue.t_infl):
                 lineHead.set_color("red")
+            if (self.dynamics.t_vect[i] > self.dynamics.mainpara.t_infl):
+                lineHead.set_color("orange")
 
             line.set_data(self.dynamics.x_vect[:i], self.dynamics.z_vect[:i])
             lineHead.set_data(self.dynamics.x_vect[i], self.dynamics.z_vect[i])
@@ -119,8 +118,11 @@ class PlotAnimate:
 
             # info.set_text("v={:3.3f}, mach={:2.1f}, rho={:1.8f}, temp, opening force".format(v, mach, rho))
             # info.set_text("mach, m={:2.1f}".format(mach))
-            info.set_text("Mach = %.2f\n ||v|| = %.2f m/s\n g = %.1f \n Opening force = %.2f N \n g_max = %.1f\n max Mach = %.2f\n" % (
-                mach, v, self.dynamics.g_vect[i], self.dynamics.drogue.opening_force, np.max(np.abs(self.dynamics.g_vect)), np.max(np.abs(self.dynamics.mach_vect))))
+            info.set_text(
+                "Mach = %.2f\n ||v|| = %.2f m/s\n g = %.1f \n Opening force drogue = %.2f N \n  Opening force main chute = %.2f N \n g_max = %.1f\n max Mach = %.2f\n" % (
+                    mach, v, self.dynamics.g_vect[i], self.dynamics.drogue.opening_force,
+                    self.dynamics.mainpara.opening_force, np.max(np.abs(self.dynamics.g_vect)),
+                    np.max(np.abs(self.dynamics.mach_vect))))
             return line, lineHead, title, info,
 
         # calling the animation function
