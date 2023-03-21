@@ -51,25 +51,32 @@ class PlotAnimate:
 
     def plot_dynamics(self):
         plt.figure(1)
-        plt.subplot(131)
+        plt.subplot(141)
         plt.plot(self.dynamics.t_vect, self.dynamics.vx_vect, "b-", lw=2)
         plt.title(r'Velocity component vx with time')
         plt.xlabel(r'$t$ [s]')
         plt.ylabel(r'$x$ [m]')
         plt.grid()
 
-        plt.subplot(132)
+        plt.subplot(142)
         plt.plot(self.dynamics.t_vect, self.dynamics.vz_vect, "g-", lw=2)
         plt.title(r'Velocity component vz with time')
         plt.xlabel(r'$t$ [s]')
         plt.ylabel(r'$vz$ [m/s]')
         plt.grid()
 
-        plt.subplot(133)
-        plt.plot(self.dynamics.t_vect[:-1], self.dynamics.g_vect, "r-", lw=2)
+        plt.subplot(143)
+        plt.plot(self.dynamics.t_vect, self.dynamics.g_vect, "r-", lw=2)
         plt.title(r'Number of g''s with time')
         plt.xlabel(r'$t$ [s]')
         plt.ylabel(r'$g$')
+        plt.grid()
+
+        plt.subplot(144)
+        plt.plot(self.dynamics.t_vect, self.dynamics.mach_vect, "k-", lw=2)
+        plt.title(r'Mach number during reentry')
+        plt.xlabel(r'$t$ [s]')
+        plt.ylabel(r'$M$')
         plt.grid()
         plt.show()
 
@@ -112,8 +119,8 @@ class PlotAnimate:
 
             # info.set_text("v={:3.3f}, mach={:2.1f}, rho={:1.8f}, temp, opening force".format(v, mach, rho))
             # info.set_text("mach, m={:2.1f}".format(mach))
-            info.set_text("Mach = %.2f\n ||v|| = %.2f m/s\n g = %.1f \n Opening force = %.2f N \n g_max = %.1f\n" % (
-                mach, v, self.dynamics.g_vect[i], self.dynamics.drogue.opening_force, np.max(np.abs(self.dynamics.g_vect))))
+            info.set_text("Mach = %.2f\n ||v|| = %.2f m/s\n g = %.1f \n Opening force = %.2f N \n g_max = %.1f\n max Mach = %.2f\n" % (
+                mach, v, self.dynamics.g_vect[i], self.dynamics.drogue.opening_force, np.max(np.abs(self.dynamics.g_vect)), np.max(np.abs(self.dynamics.mach_vect))))
             return line, lineHead, title, info,
 
         # calling the animation function

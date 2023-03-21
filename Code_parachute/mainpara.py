@@ -2,8 +2,9 @@ from parachute import Parachute
 from pyatmos import coesa76
 import numpy as np
 
-class Drogue(Parachute):
-    """Class Drogue. It contains all the parameters that characterize the preliminary design of the hemisflo drouge parachute"""
+class Mainpara(Parachute):
+    """Class Mainpara (i.e. main parachute). It contains all the parameters that characterize the main parachute.
+        This allows to properly estimate when to deploy the drogue parachute"""
 
     def __init__(self, cd0_parachute, z_deploy, s_chute, lambda_t, x1_factor = 0.95, cx_factor = 1.25):
         # default values for the factors are taken from Knacke's book
@@ -30,7 +31,7 @@ class Drogue(Parachute):
         """ This method computes the product cD*S of the parachute during the inflation and after it.
             A linear inflation is supposed to take place."""
 
-        self.compute_cd(mach)
+        self.compute_cd_drogue(mach)
 
         if z <= self.z_deploy:  # if we have reached the altitude of deployment
 

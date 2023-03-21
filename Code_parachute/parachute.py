@@ -24,7 +24,7 @@ class Parachute:
         self.opening_force = 0.0
 
     @abstractmethod
-    def compute_cd_drogue(self, mach):
+    def compute_cd(self, mach):
         pass
 
     @abstractmethod

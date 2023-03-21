@@ -19,12 +19,17 @@ def model(t,y, drogueObj, rocketObj):
     drogueObj.compute_dragArea_chute(t, z, v, mach)  # set the drag area member of the drogue chute
     theta = np.arctan(np.abs(vz) / vx)
 
+
     dydt = [vz,
             1 / rocketObj.mass * ((1 / 2 * rho * (v ** 2) * rocketObj.cross_section * (rocketObj.cd) + 1 / 2 * rho * (
                     v ** 2) * drogueObj.drag_area) * np.sin(
-                theta) -  rocketObj.mass*GRAVITY),
+                theta) - rocketObj.mass * GRAVITY)
+        ,
             vx,
             -1 / rocketObj.mass * ((1 / 2 * rho * (v ** 2) * rocketObj.cross_section * (rocketObj.cd) + 1 / 2 * rho * (
                     v ** 2) * drogueObj.drag_area) * np.cos(theta))]
+
+
+
 
     return dydt

@@ -14,8 +14,9 @@ mpl.rcParams.update(mpl.rcParamsDefault)
 
 
 new_rocket = Rocket(0.55, 80.0, 0.02)               # cd0 rocket, mass of rocket, cross-section
-new_drogue = Drogue(0.35, 10e3, 0.2, 25)            # cd0 drogue, altitude of deployment, surface of chute, total porosity
-dynamics_obj = DynamicsReentry(300, 0, 100e3, 200, 0, new_drogue, new_rocket)  # final_time, x0, z0, vx0, vz0, objects)
+new_drogue = Drogue(0.35, 15e3, 0.3, 25)            # cd0 drogue, altitude of deployment, surface of chute, total porosity
+dynamics_obj = DynamicsReentry(300, 0, 100e3, 300, 0, new_drogue, new_rocket)  # final_time, x0, z0, vx0, vz0, objects)
+
 
 dynamics_obj.solve_dynamics()
 
