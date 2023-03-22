@@ -1,0 +1,34 @@
+x0 = np.array([15e3, 5e2])
+final_v = 20   # let impose a landing velocity of 20 m/s
+force_main = 50e3
+force_drogue = 10e3
+
+# linear_constraint = LinearConstraint([[-1, 1], [1, 0], [0,1]], [-np.inf, 1e3, 2e2], [0, 20e3, 2e3])
+# res = minimize(optimal_reentry, x0, method='SLSQP', constraints=linear_constraint, args = (20.0, 50e3, 10e3),
+#                options={'disp': True})
+
+# let's attempt a grid search
+
+# N = 1
+# z_drogue = np.linspace(7533, 7533, N)
+# z_main = np.linspace(250, 250, N)
+# min_matrix = np.zeros((N,N))
+#
+# final_vz = 20.0
+# max_force_drogue = 10e3
+# max_force_main = 100e3
+#
+# optimal_reentry(z_drogue[i], z_main[j], final_vz, max_force_drogue, max_force_main)
+# for i in range(0, len(z_drogue)-1):
+#     for j in (0, len(z_main)-1):
+#         if z_drogue[i] > z_main[j]:
+#             min_matrix[i,j] = optimal_reentry(z_drogue[i], z_main[j], final_vz, max_force_drogue, max_force_main)
+#         else:
+#             min_matrix[i,j] = 3.14
+#
+# fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+# X, Y = np.meshgrid(z_drogue, z_main)
+# surf = ax.plot_surface(X, Y, min_matrix, cmap=cm.coolwarm,
+#                        linewidth=0, antialiased=False)
+#
+# plt.show()

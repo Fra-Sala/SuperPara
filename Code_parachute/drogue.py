@@ -51,8 +51,8 @@ class Drogue(Parachute):
 
         """This computatiion is based on Knacke's book. It is valid for a hemisflo parachute"""
         rho = coesa76(z / 1000).rho
-        self.opening_force = self.cd * self.surface * (
-                    1 / 2 * rho * v**2) * self.cx_factor * self.x1_factor
+        self.opening_force = float(self.cd * self.surface * (
+                    1 / 2 * rho * v**2) * self.cx_factor * self.x1_factor)
 
         if self.opening_force > 15000:
             print("Warning: your drogue parachute would probably be in pieces!\n")

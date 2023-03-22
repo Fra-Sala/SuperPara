@@ -87,10 +87,10 @@ class PlotAnimate:
         line, = ax.plot([], [], "k--", lw=1)
         lineHead, = ax.plot([], [], "bo", lw=2)
 
-        title = ax.text(0, self.dynamics.z_vect[0], 'Reentry of rocket and parachute dynamics',
-                        fontsize=15)
-        info = ax.text(0.8 * self.dynamics.z_vect[0], 0.8 * self.dynamics.z_vect[0], 'mach',
-                       fontsize=12)
+        title = ax.text(0,1.05, 'Animation of the reentry of rocket and parachute dynamics',
+                        fontsize=15, transform=ax.transAxes) #0, self.dynamics.z_vect[0]
+        info = ax.text(0.8, 0.8, 'Mach',
+                       fontsize=12, transform=ax.transAxes)
 
         def init():
             line.set_data([], [])
@@ -119,8 +119,8 @@ class PlotAnimate:
             # info.set_text("v={:3.3f}, mach={:2.1f}, rho={:1.8f}, temp, opening force".format(v, mach, rho))
             # info.set_text("mach, m={:2.1f}".format(mach))
             info.set_text(
-                "Mach = %.2f\n ||v|| = %.2f m/s\n g = %.1f \n Opening force drogue = %.2f N \n  Opening force main chute = %.2f N \n g_max = %.1f\n max Mach = %.2f\n" % (
-                    mach, v, self.dynamics.g_vect[i], self.dynamics.drogue.opening_force,
+                "Altitude: %.1f m\n Mach = %.2f\n ||v|| = %.2f m/s\n g = %.1f \n Opening force drogue = %.2f N \n  Opening force main chute = %.2f N \n g_max = %.1f\n max Mach = %.2f\n" % (
+                    self.dynamics.z_vect[i],mach, v, self.dynamics.g_vect[i], self.dynamics.drogue.opening_force,
                     self.dynamics.mainpara.opening_force, np.max(np.abs(self.dynamics.g_vect)),
                     np.max(np.abs(self.dynamics.mach_vect))))
             return line, lineHead, title, info,

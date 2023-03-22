@@ -43,7 +43,7 @@ class DynamicsReentry:
         hit_ground.terminal = True
 
         result = solve_ivp(model, [self.t_vect[0], self.t_vect[-1]], y0, events=hit_ground,
-                           args=(self.mainpara, self.drogue, self.rocket), method='LSODA', first_step=0.01, max_step=0.02)
+                           args=(self.mainpara, self.drogue, self.rocket), method='LSODA', first_step=0.01, max_step=0.015)
         self.t_vect = result.t
         self.z_vect = result.y[0, :]
         self.vz_vect = result.y[1, :]
