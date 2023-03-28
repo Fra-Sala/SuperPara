@@ -2,11 +2,13 @@ from parachute import Parachute
 from pyatmos import coesa76
 import numpy as np
 
-class Drogue(Parachute):
-    """Class Drogue. It contains all the parameters that characterize the preliminary design of the hemisflo drouge parachute"""
+class ConicalRibbon(Parachute):
+    """Class ConicalRibbon (i.e. main parachute). It contains all the parameters that characterize the main parachute.
+        This allows to properly estimate when to deploy the drogue parachute"""
 
-    def __init__(self, cd0_parachute, z_deploy, s_chute, lambda_t, x1_factor = 0.95, cx_factor = 1.25):
+    def __init__(self, z_deploy, s_chute, lambda_t, x1_factor = 0.9, cx_factor = 1.05):
         # default values for the factors are taken from Knacke's book
+        cd0_parachute = 0.5
         Parachute.__init__(self,cd0_parachute, z_deploy, s_chute, lambda_t, x1_factor, cx_factor)
 
     def compute_cd(self, mach):
@@ -15,10 +17,7 @@ class Drogue(Parachute):
                 operating at M >> 0.3 (compressibility effects not negligible). The implemented law
                  is taken from the plot in "Parachute recovery systems design manual", Section 5"""
 
-        if mach < 1.9:
-            self.cd = 0.35
-        else:
-            self.cd = -1 / 9 * mach + 0.561  # data from Pepper 1986
+        self.cd = self.cd0 + 0.0*mach  # The main parachute is expected to work at M < 0.3, therefore we approximate its cd as constant with the mach number
 
     def compute_delta_t_infl(self, v):
         """ This method computes the delta of time required for full inflation. The empirical formula is taken from
@@ -49,11 +48,11 @@ class Drogue(Parachute):
 
     def compute_opening_load(self, t, z, v, mach):
 
-        """This computatiion is based on Knacke's book. It is valid for a hemisflo parachute"""
+        """This computation is based on Knacke's book. It is valid for a conical ribbon parachute"""
         rho = coesa76(z / 1000).rho
         self.opening_force = float(self.cd * self.surface * (
                     1 / 2 * rho * v**2) * self.cx_factor * self.x1_factor)
 
-        if self.opening_force > 15000:
-            print("Warning: your drogue parachute would probably be in pieces!\n")
+        if self.opening_force > 1e5:
+            print("Warning: your main parachute would probably be in pieces!\n")
 

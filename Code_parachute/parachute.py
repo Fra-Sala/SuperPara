@@ -1,6 +1,3 @@
-import numpy as np
-from pyatmos import coesa76
-from constants import *
 from abc import abstractmethod
 
 

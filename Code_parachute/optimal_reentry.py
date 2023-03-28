@@ -1,6 +1,6 @@
 import numpy as np
-from mainpara import Mainpara
-from drogue import Drogue
+from conicalribbon import ConicalRibbon
+from hemisflo import Hemisflo
 from rocket import Rocket
 from dynamics import DynamicsReentry
 

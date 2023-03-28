@@ -1,8 +1,6 @@
 from constants import *
 from pyatmos import coesa76
 import numpy as np
-from parachute import Parachute
-from rocket import Rocket
 from scipy.integrate import solve_ivp
 from model import model
 

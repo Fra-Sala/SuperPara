@@ -4,7 +4,7 @@ from dynamics import DynamicsReentry
 from matplotlib import rc
 from dynamics import DynamicsReentry
 from parachute import Parachute
-from drogue import Drogue
+from hemisflo import Hemisflo
 from pyatmos import coesa76
 from constants import *
 import numpy as np
