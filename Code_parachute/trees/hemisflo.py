@@ -8,7 +8,8 @@ class Hemisflo(Parachute):
     def __init__(self, z_deploy, x1_factor = 0.95, cx_factor = 1.25):
         # default values for the factors are taken from Knacke's book
         cd0_parachute = 0.35
-        Parachute.__init__(self,cd0_parachute, z_deploy, x1_factor, cx_factor)
+        type_str = "hemisflo"
+        Parachute.__init__(self,cd0_parachute, z_deploy, x1_factor, cx_factor, type_str)
 
     def compute_cd(self, mach):
 

@@ -10,7 +10,8 @@ class ConicalRibbon(Parachute):
     def __init__(self, z_deploy, x1_factor=0.9, cx_factor=1.05):
         # default values for the factors are taken from Knacke's book
         cd0_parachute = 0.5
-        Parachute.__init__(self, cd0_parachute, z_deploy, x1_factor, cx_factor)
+        type_str = "conical ribbon"
+        Parachute.__init__(self, cd0_parachute, z_deploy, x1_factor, cx_factor, type_str)
 
     def compute_cd(self, mach):
 

@@ -6,7 +6,7 @@ import pandas as pd
 
 class Parachute:
 
-    def __init__(self, cd0_parachute, z_deploy, x1_factor, cx_factor):
+    def __init__(self, cd0_parachute, z_deploy, x1_factor, cx_factor, type_string):
 
         """Constuctor for object Parachute"""
         self.drag_area = 0.0
@@ -22,6 +22,7 @@ class Parachute:
         self.x1_factor = x1_factor   # default value based on reasonable value suggested by Kancke  (see 7.39)
         self.cx_factor = cx_factor   #  default value based on reasonable value suggested by Kancke (see 7.39)
         self.opening_force = 0.0
+        self.type_chute = type_string  # store the name of the type of parachute (e.g. "hemisflo", "conical ribbon",)
 
     @abstractmethod
     def compute_cd(self, mach):
