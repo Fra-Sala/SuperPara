@@ -5,10 +5,10 @@ import numpy as np
 class Hemisflo(Parachute):
     """Class Hemisflo. It contains all the parameters that characterize the preliminary design of the hemisflo drouge parachute"""
 
-    def __init__(self, z_deploy, s_chute, lambda_t, x1_factor = 0.95, cx_factor = 1.25):
+    def __init__(self, z_deploy, x1_factor = 0.95, cx_factor = 1.25):
         # default values for the factors are taken from Knacke's book
         cd0_parachute = 0.35
-        Parachute.__init__(self,cd0_parachute, z_deploy, s_chute, lambda_t, x1_factor, cx_factor)
+        Parachute.__init__(self,cd0_parachute, z_deploy, x1_factor, cx_factor)
 
     def compute_cd(self, mach):
 
@@ -22,15 +22,24 @@ class Hemisflo(Parachute):
             self.cd = -1 / 9 * mach + 0.561  # data from Pepper 1986
 
     def compute_delta_t_infl(self, v):
-        """ This method computes the delta of time required for full inflation. The empirical formula is taken from
-            Knacke's book, for a ribbon parachute."""
-        self.delta_t_infl = 0.65*self.lambda_t*2*np.sqrt(self.surface/(4*np.pi))/np.abs(v) #(8 * np.sqrt(4 * self.surface / np.pi) / (np.abs(v) ** 0.9))
+        """
+        This method overrides mother-method. It computes the delta time for the
+        inflation of a ribbon parachute. The used empirical formula depends
+        on the type of parachute. See Knacke's book page 5-42 for details.
+        :param v: current velocity [m/s]
+
+
+        """
+        self.delta_t_infl = 0.65*self.lambda_t*2*np.sqrt(self.surface/(4*np.pi))/np.abs(v)
 
     def compute_dragArea_chute(self, t, z, v, mach):
+        """
 
-        """ This method computes the product cD*S of the parachute during the inflation and after it.
-            A linear inflation is supposed to take place."""
-
+        :param t: current instant of time [s]
+        :param z: current altitude [m]
+        :param v: current velocity [m/s]
+        :param mach: current Mach number
+        """
         self.compute_cd(mach)
 
         if z <= self.z_deploy:  # if we have reached the altitude of deployment
@@ -41,7 +50,7 @@ class Hemisflo(Parachute):
                 self.t_infl = t
                 print("The inflation of the hemisflo takes place at v = %.2f, mach = %,2f", v, mach)
                 self.compute_delta_t_infl(v)
-                self.compute_opening_load(self.t_infl,z,v,mach)
+                self.compute_opening_load(z,v)
                 self.slope_infl = (self.cd) * (self.surface) / self.delta_t_infl
 
             if (t - self.t_infl) <= self.delta_t_infl:  # if the chute is inflating
@@ -49,13 +58,4 @@ class Hemisflo(Parachute):
             else:
                 self.drag_area = self.cd * self.surface
 
-    def compute_opening_load(self, t, z, v, mach):
-
-        """This computatiion is based on Knacke's book. It is valid for a hemisflo parachute"""
-        rho = coesa76(z / 1000).rho
-        self.opening_force = float(self.cd * self.surface * (
-                    1 / 2 * rho * v**2) * self.cx_factor * self.x1_factor)
-
-        if self.opening_force > 15000:
-            print("Warning: your hemisflo parachute would probably be in pieces!\n")
 
