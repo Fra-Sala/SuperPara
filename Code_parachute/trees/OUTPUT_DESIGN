@@ -2,20 +2,23 @@
 
 
  1. DROGUE DESIGN
-You selected a hemisflo parachute
-The selected drogue parachute will be deployed in supersonic conditions, at Mach = [3.06178665]
+You selected a hemisflo parachute.
+The selected drogue parachute will be deployed in supersonic conditions, at Mach = 3.06
 Here are the design parameters for the drogue:
 
-	S_0 = 0.21 [m^2]
-	cd0 (at v = 0 m/s) = 0.35 [-]
-	delta t = 0.00537 [s]
+	S0 = 0.207 [m^2]
+	D0 = 0.514 [m]
+	Dp = 0.336 [m]
+	Drag coeff. related to S0, cd0 = 0.35 [-]
+	Δt inflation = 0.00537 [s]
 	Altitude of deployment = 6000.00[m]
-	Total porosity = 31.19 %
-	Inflation load = 16863.14 [N]
+	Total porosity = 31.193 %
+	Inflation load = 16863.140 [N]
 	cx factor = 1.250 
 	X1 factor = 0.950 
-Length of suspension lines
-Number of gores 
-Diameter of hole on top
-Canopy cone angle
+	Length of suspension lines  = 1.03 [m]
+	Number of gores 
+	Gore height h_s  = 0.235 [m]
+	D_v (vent diameter) = 
+	Canopy cone angle
 -------------------------------------------------

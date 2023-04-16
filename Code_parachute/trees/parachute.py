@@ -23,7 +23,10 @@ class Parachute:
         self.cx_factor = cx_factor   #  default value based on reasonable value suggested by Kancke (see 7.39)
         self.opening_force = 0.0
         self.type_chute = type_string  # store the name of the type of parachute (e.g. "hemisflo", "conical ribbon",)
-
+        self.suspension_lines = 0.0
+        self.D_0 = 0.0
+        self.D_p = 0.0       # diameter after inflation
+        self.h_s = 0.0      # gore height
     @abstractmethod
     def compute_cd(self, mach):
         pass
