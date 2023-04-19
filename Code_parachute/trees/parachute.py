@@ -102,3 +102,7 @@ class Parachute:
         elif type_chute == 2:
             lambda_csv = np.loadtxt("./Porosity_plot/plot6_23_II.csv",  delimiter=",")
             self.lambda_t = np.interp(D0_feet, lambda_csv[:,0 ], lambda_csv[:,1])
+
+    @abstractmethod
+    def create_design(self):
+        pass

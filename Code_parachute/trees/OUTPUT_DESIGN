@@ -10,7 +10,7 @@ Here are the design parameters for the drogue:
 	D0 = 0.514 [m]
 	Dp = 0.336 [m]
 	Drag coeff. related to S0, cd0 = 0.35 [-]
-	Δt inflation = 0.00537 [s]
+	Δt inflation = 0.01075 [s]
 	Altitude of deployment = 6000.00[m]
 	Total porosity = 31.193 %
 	Inflation load = 16863.140 [N]
@@ -21,4 +21,5 @@ Here are the design parameters for the drogue:
 	Gore height h_s  = 0.235 [m]
 	D_v (vent diameter) = 
 	Canopy cone angle
+	Total porosity = 31.193 
 -------------------------------------------------
