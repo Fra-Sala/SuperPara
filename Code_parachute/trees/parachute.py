@@ -16,6 +16,7 @@ class Parachute:
         self.delta_t_infl = 1.0
         self.slope_infl = 1.0
         self.z_deploy = z_deploy
+        self.lambda_material = 2.0   # %, reasonable value of porosity of the material
         self.lambda_t = 0.0  # total porosity. In Knacke's book there are plots with suggested values
         self.surface = 0.0
         self.flag_infl = 0  # it allows to check whether the inflation has taken place or not yet
@@ -27,6 +28,8 @@ class Parachute:
         self.D_0 = 0.0
         self.D_p = 0.0       # diameter after inflation
         self.h_s = 0.0      # gore height
+
+
     @abstractmethod
     def compute_cd(self, mach):
         pass
@@ -105,4 +108,8 @@ class Parachute:
 
     @abstractmethod
     def create_design(self):
+        pass
+
+    @abstractmethod
+    def write_out(self, file):
         pass
