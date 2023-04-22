@@ -24,8 +24,10 @@ class Interface:
         self.z_deploy_main = 0.0
         self.final_v = 0.0
         self.window = master
+        self.window.geometry('800x600')
+        self.window.resizable(False, False)
         self.window.title("SUPERSONIC PARACHUTE DESIGN TOOL")
-        self.window.geometry('600x400')
+        self.window.option_add('*Font', 'Arial 20')  # set font as Arial 20
 
         self.label_rocket = ctk.CTkLabel(self.window, text="ROCKET PARAMETERS")
         self.label_rocket.grid(column=0, row=0)
@@ -81,23 +83,38 @@ class Interface:
         self.final_v = ctk.CTkEntry(self.window, width=50, height=25, corner_radius=10)
         self.final_v.grid(row=3, column=3)
 
+        # Here we define the checkbox to choose the desidered type of parachute
+        self.label_drogue = ctk.CTkLabel(self.window, text="Select type of drogue parachute")
+        self.label_drogue.grid(row=4, column=2)
+        self.hemisflo_type_var = tk.BooleanVar(value=False)
+        self.hemisflo_type_cb = ctk.CTkCheckBox(self.window, text="Hemisflo (supersonic)",
+                                                variable=self.hemisflo_type_var)
+        self.hemisflo_type_cb.grid(row=5, column=2)
+        self.conical_ribbon_type_var = tk.BooleanVar(value=False)
+        self.conical_ribbon_type_cb = ctk.CTkCheckBox(self.window, text="Conical Ribbon",
+                                                      variable=self.conical_ribbon_type_var)
+        self.conical_ribbon_type_cb.grid(row=6, column=2)
+
+        # Here we let the user decide whether to have insights into the dynamics
         self.show_animation_var = tk.BooleanVar(value=False)
         self.show_animation_cb = ctk.CTkCheckBox(self.window, text="Show Animation", variable=self.show_animation_var)
         self.show_animation_cb.grid(column=5, row=6)
 
+        # Finally, a button to run the simualation
         self.button_run = ctk.CTkButton(self.window, text="RUN",
                                         corner_radius=10,
                                         hover_color="#AA0",
                                         command=self.run_button)
-        self.button_run.grid(column=5, row=5)
+        self.button_run.grid(row=5, column=5)
 
         self.label = ctk.CTkLabel(master, text="")
-        self.label.grid(column=2, row=4)
+        self.label.grid(row=4, column=2)
 
-        self.new_drogue = 0.0
-        self.new_mainpara = 0.0
-        self.new_rocket = 0.0
-        self.dynamics_obj = 0.0
+        # Here the attributes to store the necessary objects
+        self.new_drogue = None
+        self.new_mainpara = None
+        self.new_rocket = None
+        self.dynamics_obj = None
 
     def run_button(self):
 
@@ -184,15 +201,26 @@ class Interface:
                      f"final_v = {final_v}\n"
             self.label.configure(text=result)
 
-        self.new_mainpara = ConicalRibbon(z_deploy_main)  # conical ribbon parachute
-        self.new_mainpara.required_S0(final_v, mass_payload, z=0.0, option=1)
-        self.new_mainpara.compute_porosity(type_chute=2)
+        # The types of parachutes are selected according to the user choice
+        if self.hemisflo_type_var.get() == 1:
+            self.new_drogue = Hemisflo(z_deploy_drogue)
+        else:
+            print("Sorry, no other types of parachutes are implemented at the moment\n")
 
-        self.new_drogue = Hemisflo(z_deploy_drogue)
         self.new_drogue.required_S0(0.4, mass_payload, z_deploy_main, option=2)
         self.new_drogue.compute_porosity(type_chute=3)
+
+        self.new_mainpara = ConicalRibbon(z_deploy_main)  # conical ribbon parachute
+        self.new_mainpara.required_S0(final_v, mass_payload, z=0.0, option=1)
+        # Quick check if the resultind dimension of the mainpara is feasible
+        if self.new_mainpara.surface > 100.0:  # [m^2]
+            print("The specs indicated lead to a huge main parachute. Try different specifications\n.")
+
+        self.new_mainpara.compute_porosity(type_chute=2)
+
         self.new_rocket = Rocket(cd0_rocket, mass_payload,
                                  cross_rocket)  # cd0 rocket, mass of rocket, cross-section
+
         t_max = 500.0
         x0 = 0.0
         self.dynamics_obj = DynamicsReentry(t_max, x0, z0 * 1e3, vx0, vz0, self.new_mainpara,

@@ -43,7 +43,7 @@ def run_mock():
     :param
 
     """
-    new_drogue = Hemisflo(6000)
+    new_drogue = Hemisflo(5000)
     new_drogue.required_S0(0.4, 80.0, 400, option=2)
     new_drogue.compute_porosity(type_chute=3)
     new_mainpara = ConicalRibbon(400)
@@ -66,7 +66,7 @@ def run_mock():
 
 if __name__ == "__main__":
 
-    test = 1
+    test = 0
     if test == 0:
         run_all()
     else:

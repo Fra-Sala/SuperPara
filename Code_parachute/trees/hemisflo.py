@@ -29,7 +29,6 @@ class Hemisflo(Parachute):
         self.D0 = None
         self.suspension_lines = None
         self.D_p = None
-        self.h_s = None
         self.gamma = None
         self.D = None
         self.r = None
@@ -120,7 +119,7 @@ class Hemisflo(Parachute):
         suspension_lines = b * np.sqrt(4 / np.pi * self.surface)
         D0 = np.sqrt(4 / np.pi * S0)
         D_p = np.sqrt(360.0 * S0 / (210.0 * np.pi))  # The formula on page 6-33 Knacke is wrong
-        h_s = 0.916 * D0 / 2
+
         gamma = 2 * np.arcsin(
             np.sin(np.pi / n) / (np.pi * (a + b)))  # [rad]
         D = np.sqrt((S0 / n) / (2 / (np.pi ** 2) * np.sin(np.pi / n) * np.cos(np.pi / n) + (
@@ -201,7 +200,7 @@ class Hemisflo(Parachute):
         self.D0 = D0
         self.suspension_lines = suspension_lines
         self.D_p = D_p
-        self.h_s = h_s
+
         self.gamma = gamma
         self.D = D
         self.r = r
@@ -223,25 +222,24 @@ class Hemisflo(Parachute):
 
     def write_out(self, file):
 
-        file.write("\tA_0 = {:.3f} [m^2] (open area of a gore including vent area)\n".format(float(self.A_0)))
+        file.write("\tA_0 = {:.3f} [m^2] (open area of a gore including vent area)\n\n".format(float(self.A_0)))
         file.write(
-            "\tA_0H = {:.3f} [m^2] (open area between horizontal ribbons of one gore)\n".format(float(self.A_0H)))
-        file.write("\tD = {:.3f} [m] (circumferential distance of the hemispherical part)\n".format(float(self.D)))
-        file.write("\tD_p = {:.3f} [m] (diameter of the hemisphere after inflation)\n".format(float(self.D_p)))
-        file.write("\te_gb = {:.3f} [m] (gore width at skirt of hemispherical portion)\n".format(float(self.e_gb)))
-        file.write("\te_g2 = {:.3f} [m] (gore width at skirt of the extension)\n".format(float(self.e_g2)))
+            "\tA_0H = {:.3f} [m^2] (open area between horizontal ribbons of one gore)\n\n".format(float(self.A_0H)))
+        file.write("\tD = {:.3f} [m] (circumferential distance of the hemispherical part)\n\n".format(float(self.D)))
+        file.write("\tD_p = {:.3f} [m] (diameter of the hemisphere after inflation)\n\n".format(float(self.D_p)))
+        file.write("\te_gb = {:.3f} [m] (gore width at skirt of hemispherical portion)\n\n".format(float(self.e_gb)))
+        file.write("\te_g2 = {:.3f} [m] (gore width at skirt of the extension)\n\n".format(float(self.e_g2)))
         file.write(
-            "\t\u03B3 = {:.3f} [rad] (angle between two adjacent suspension lines)\n".format(float(self.gamma)))
-        file.write("\th_e = {:.3f} [m] (height of the skirt extension measured along gore centerline)\n".format(
+            "\t\u03B3 = {:.3f} [rad] (angle between two adjacent suspension lines)\n\n".format(float(self.gamma)))
+        file.write("\th_e = {:.3f} [m] (height of the skirt extension measured along gore centerline)\n\n".format(
             float(self.h_e)))
         file.write(
-            "\th_max = {:.3f} [m] (maximum height of a gore of the hemispherical part)\n".format(float(self.h_max)))
-        file.write("\th_s = {:.3f} [m] (height of the skirt)\n".format(float(self.h_s)))
-        file.write("\tL_e = {:.3f} [m] (Length of suspension lines)\n".format(float(self.suspension_lines)))
-        file.write("\tL_v = {:.3f} [m] (vent line length divided by two)\n".format(float(self.L_v)))
-        file.write("\tR_S = {:.3f} [m] (height of space between horizontal ribbons)\n".format(float(self.R_S)))
-        file.write(
-            "\tS_01 = {:.3f} [m^2] (area of the hemispherical portion of the canopy)\n".format(float(self.S01)))
-        file.write("\tS_02 = {:.3f} [m^2] (area of the skirt extension)\n".format(float(self.S02)))
-        file.write("\tU_RS = {:.3f} [m] (usable ribbon space)\n".format(float(self.U_RS)))
+            "\th_max = {:.3f} [m] (maximum height of a gore of the hemispherical part)\n\n".format(float(self.h_max)))
 
+        file.write("\tL_e = {:.3f} [m] (Length of suspension lines)\n\n".format(float(self.suspension_lines)))
+        file.write("\tL_v = {:.3f} [m] (vent line length divided by two)\n\n".format(float(self.L_v)))
+        file.write("\tR_S = {:.3f} [m] (height of space between horizontal ribbons)\n\n".format(float(self.R_S)))
+        file.write(
+            "\tS_01 = {:.3f} [m^2] (area of the hemispherical portion of the canopy)\n\n".format(float(self.S01)))
+        file.write("\tS_02 = {:.3f} [m^2] (area of the skirt extension)\n\n".format(float(self.S02)))
+        file.write("\tU_RS = {:.3f} [m] (usable ribbon space)\n\n".format(float(self.U_RS)))

@@ -27,7 +27,6 @@ class Parachute:
         self.suspension_lines = 0.0
         self.D_0 = 0.0
         self.D_p = 0.0       # diameter after inflation
-        self.h_s = 0.0      # gore height
 
 
     @abstractmethod
@@ -78,7 +77,7 @@ class Parachute:
             CD_S0 = mass * GRAVITY / (0.5 * RHO_0 * val_max ** 2)
             self.surface = CD_S0 / self.cd0
         elif option == 2: # in this case val_max is the Mach number that the drogue must reach by deceleration
-            rho = coesa76(z/1000).rho
+            rho = float(coesa76(z/1000).rho)
             v = val_max * np.sqrt(GAMMA * R_AIR * coesa76(z/1000).T)
             CD_S0 = mass * GRAVITY / (0.5 * rho * v ** 2)
             self.surface = CD_S0/self.cd0
