@@ -50,7 +50,7 @@ def run_mock():
     new_mainpara.required_S0(20, 80.0, z=0.0, option=1)
     new_mainpara.compute_porosity(type_chute=2)
 
-    new_rocket = Rocket(0.55, 80.0, 0.03)
+    new_rocket = Rocket(0.55, 80.8, 0.03)
     dynamics_obj = DynamicsReentry(500, 0.0, 100e3, 300.0, 0.0, new_mainpara, new_drogue, new_rocket)
     dynamics_obj.solve_dynamics()
     plot_animate_obj = PlotAnimate(dynamics_obj)

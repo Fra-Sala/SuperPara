@@ -24,12 +24,12 @@ class Interface:
         self.z_deploy_main = 0.0
         self.final_v = 0.0
         self.window = master
-        self.window.geometry('800x600')
+        self.window.geometry('700x300')
         self.window.resizable(False, False)
         self.window.title("SUPERSONIC PARACHUTE DESIGN TOOL")
         self.window.option_add('*Font', 'Arial 20')  # set font as Arial 20
 
-        self.label_rocket = ctk.CTkLabel(self.window, text="ROCKET PARAMETERS")
+        self.label_rocket = ctk.CTkLabel(self.window, text="ROCKET PARAMETERS", font=("Times New Roman", 18, "bold"))
         self.label_rocket.grid(column=0, row=0)
 
         self.label_mass = ctk.CTkLabel(self.window, text="Mass of payload [kg]")
@@ -47,7 +47,7 @@ class Interface:
         self.cross_rocket = ctk.CTkEntry(self.window, width=50, height=25, corner_radius=10)
         self.cross_rocket.grid(row=3, column=1)
 
-        self.label_initial = ctk.CTkLabel(self.window, text="INITIAL CONDITIONS")
+        self.label_initial = ctk.CTkLabel(self.window, text="INITIAL CONDITIONS", font=("Times New Roman", 18, "bold"))
         self.label_initial.grid(row=4, column=0)
 
         self.label_z0 = ctk.CTkLabel(self.window, text="Initial altitude [km]")
@@ -65,7 +65,7 @@ class Interface:
         self.vz0 = ctk.CTkEntry(self.window, width=50, height=25, corner_radius=10)
         self.vz0.grid(row=7, column=1)
 
-        self.label_initial = ctk.CTkLabel(self.window, text="DESIGN PARAMETERS")
+        self.label_initial = ctk.CTkLabel(self.window, text="DESIGN PARAMETERS", font=("Times New Roman", 18, "bold"))
         self.label_initial.grid(row=0, column=2)
 
         self.label_z_deploy_drogue = ctk.CTkLabel(self.window, text="Drogue deployment [m]")
@@ -83,32 +83,40 @@ class Interface:
         self.final_v = ctk.CTkEntry(self.window, width=50, height=25, corner_radius=10)
         self.final_v.grid(row=3, column=3)
 
+        self.label_initial = ctk.CTkLabel(self.window, text="TYPE OF PARACHUTES", font=("Times New Roman", 18, "bold"))
+        self.label_initial.grid(row=4, column=2)
+
         # Here we define the checkbox to choose the desidered type of parachute
-        self.label_drogue = ctk.CTkLabel(self.window, text="Select type of drogue parachute")
-        self.label_drogue.grid(row=4, column=2)
+        self.label_drogue = ctk.CTkLabel(self.window, text="Select type of drogue parachute:")
+        self.label_drogue.grid(row=5, column=2)
         self.hemisflo_type_var = tk.BooleanVar(value=False)
         self.hemisflo_type_cb = ctk.CTkCheckBox(self.window, text="Hemisflo (supersonic)",
                                                 variable=self.hemisflo_type_var)
-        self.hemisflo_type_cb.grid(row=5, column=2)
+        self.hemisflo_type_cb.grid(row=6, column=2)
+
+        self.label_drogue = ctk.CTkLabel(self.window, text="Select type of main parachute:")
+        self.label_drogue.grid(row=7, column=2)
         self.conical_ribbon_type_var = tk.BooleanVar(value=False)
         self.conical_ribbon_type_cb = ctk.CTkCheckBox(self.window, text="Conical Ribbon",
                                                       variable=self.conical_ribbon_type_var)
-        self.conical_ribbon_type_cb.grid(row=6, column=2)
+        self.conical_ribbon_type_cb.grid(row=8, column=2)
 
-        # Here we let the user decide whether to have insights into the dynamics
-        self.show_animation_var = tk.BooleanVar(value=False)
-        self.show_animation_cb = ctk.CTkCheckBox(self.window, text="Show Animation", variable=self.show_animation_var)
-        self.show_animation_cb.grid(column=5, row=6)
-
-        # Finally, a button to run the simualation
+        # A button to run the simualation
         self.button_run = ctk.CTkButton(self.window, text="RUN",
                                         corner_radius=10,
                                         hover_color="#AA0",
                                         command=self.run_button)
-        self.button_run.grid(row=5, column=5)
+        self.button_run.grid(row=6, column=5)
 
+        # Here we let the user decide whether to have insights into the dynamics
+        self.show_animation_var = tk.BooleanVar(value=False)
+        self.show_animation_cb = ctk.CTkCheckBox(self.window, text="Show Animation", variable=self.show_animation_var)
+        self.show_animation_cb.grid(row=7, column=5)
+
+        # The following label is used to print possible errors when parsing the using input
         self.label = ctk.CTkLabel(master, text="")
-        self.label.grid(row=4, column=2)
+        self.label.grid(row=9, column=2)
+
 
         # Here the attributes to store the necessary objects
         self.new_drogue = None
@@ -205,12 +213,16 @@ class Interface:
         if self.hemisflo_type_var.get() == 1:
             self.new_drogue = Hemisflo(z_deploy_drogue)
         else:
-            print("Sorry, no other types of parachutes are implemented at the moment\n")
+            print("Sorry, no other types of drogue parachutes are implemented at the moment\n")
 
         self.new_drogue.required_S0(0.4, mass_payload, z_deploy_main, option=2)
         self.new_drogue.compute_porosity(type_chute=3)
 
-        self.new_mainpara = ConicalRibbon(z_deploy_main)  # conical ribbon parachute
+        if self.conical_ribbon_type_var.get() == 1:
+            self.new_mainpara = ConicalRibbon(z_deploy_main)  # conical ribbon parachute
+        else:
+            print("Sorry, no other types of main parachutes are implemented at the moment\n")
+
         self.new_mainpara.required_S0(final_v, mass_payload, z=0.0, option=1)
         # Quick check if the resultind dimension of the mainpara is feasible
         if self.new_mainpara.surface > 100.0:  # [m^2]
@@ -218,7 +230,7 @@ class Interface:
 
         self.new_mainpara.compute_porosity(type_chute=2)
 
-        self.new_rocket = Rocket(cd0_rocket, mass_payload,
+        self.new_rocket = Rocket(cd0_rocket, mass_payload+0.01*mass_payload,
                                  cross_rocket)  # cd0 rocket, mass of rocket, cross-section
 
         t_max = 500.0
