@@ -15,7 +15,6 @@ def run_all():
     window = ctk.CTk()
     gui = Interface(window)
     window.mainloop()
-
     new_drogue = gui.new_drogue
     new_mainpara = gui.new_mainpara
     new_rocket = gui.new_rocket
