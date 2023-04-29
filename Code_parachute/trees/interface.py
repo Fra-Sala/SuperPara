@@ -2,6 +2,8 @@ import customtkinter as ctk
 import tkinter as tk
 from plotanimate import PlotAnimate
 import matplotlib as mpl
+from make_design import *
+from output_dynamics import *
 
 mpl.rcParams.update(mpl.rcParamsDefault)
 from optimal_reentry import *
@@ -24,7 +26,7 @@ class Interface:
         self.z_deploy_main = 0.0
         self.final_v = 0.0
         self.window = master
-        self.window.geometry('800x800')
+        self.window.geometry('900x500')
         self.window.resizable(False, False)
         self.window.title("SUPERSONIC PARACHUTE DESIGN TOOL")
         self.window.option_add('*Font', 'Arial 20')  # set font as Arial 20
@@ -88,13 +90,13 @@ class Interface:
         self.single_z_rb.grid(row=3, column=2)
 
         # Prepare the entries for the iterations of the dynamics
-        self.label_first_z_iterate = ctk.CTkLabel(self.window, text="Begin iterations at z1 [m]:")
+        self.label_first_z_iterate = ctk.CTkLabel(self.window, text="Begin iterations at z1 [m] (z1>z2):")
         self.first_z_iterate = ctk.CTkEntry(self.window, width=50, height=25, corner_radius=10)
 
-        self.label_second_z_iterate = ctk.CTkLabel(self.window, text="End iterations at z2 [m]:")
+        self.label_second_z_iterate = ctk.CTkLabel(self.window, text="End iterations at z2 [m] (z1>z2):")
         self.second_z_iterate = ctk.CTkEntry(self.window, width=50, height=25, corner_radius=10)
 
-        self.label_n_iterations = ctk.CTkLabel(self.window, text="Number of iterations in [z1,z2]:")
+        self.label_n_iterations = ctk.CTkLabel(self.window, text="Number of iterations in [z2,z1] (z1>z2):")
         self.n_iterations = ctk.CTkEntry(self.window, width=30, height=25, corner_radius=10)
 
         # Prepare the entry for the case of single design
@@ -188,6 +190,9 @@ class Interface:
         text_z_deploy_drogue = self.z_deploy_drogue.get()
         text_z_deploy_main = self.z_deploy_main.get()
         text_final_v = self.final_v.get()
+        text_z1 = self.first_z_iterate.get()
+        text_z2 = self.second_z_iterate.get()
+        text_n_iterations = self.n_iterations.get()
 
         # Initialize error message variable
         error_message = "ERROR:\n"
@@ -228,11 +233,33 @@ class Interface:
         except ValueError:
             error_message += "vz0 must be a valid float.\n"
 
-        try:
-            # Convert the entered text to float values
-            z_deploy_drogue = float(text_z_deploy_drogue)
-        except ValueError:
-            error_message += "z_deploy_drogue must be a valid float.\n"
+        if self.option_iterate_var.get() == 1:
+            try:
+                # Convert the entered text to float values
+                z1 = float(text_z1)
+            except ValueError:
+                error_message += "z1 for iterations must be a valid float.\n"
+
+            try:
+                # Convert the entered text to float values
+                z2 = float(text_z2)
+            except ValueError:
+                error_message += "z2 for iterations must be a valid float.\n"
+
+            try:
+                # Convert the entered text to float values
+                n_iter = int(text_n_iterations)
+            except ValueError:
+                error_message += "The number of iterations must be a valid integer.\n"
+
+
+
+        elif self.option_iterate_var.get() == 2:
+            try:
+                # Convert the entered text to float values
+                z_deploy_drogue = float(text_z_deploy_drogue)
+            except ValueError:
+                error_message += "z_deploy_drogue must be a valid float.\n"
 
         try:
             # Convert the entered text to float values
@@ -262,7 +289,45 @@ class Interface:
                      f"final_v = {final_v}\n"
             self.label.configure(text=result)
 
-        # The types of parachutes are selected according to the user choice
+
+
+        if self.option_iterate_var.get() == 1:
+            z_vect_iter = np.linspace(z2, z1, n_iter);
+            for i in z_vect_iter:
+                self.make_simulation(i)
+
+        elif self.option_iterate_var.get() == 2:
+            self.make_simulation(z_deploy_drogue)
+            plot_animate_obj = PlotAnimate(self.dynamics_obj)
+            plot_animate_obj.plot_coord()
+            plot_animate_obj.plot_dynamics()
+
+            if self.show_animation_var.get() == 1:
+                speed_animation = 30
+                plot_animate_obj.animate_reentry(speed_animation)
+
+            mkds = MakeDesign(self.new_mainpara, self.new_drogue, self.new_rocket, self.dynamics_obj)
+            mkds.write_text()
+
+        self.window.destroy()
+
+
+    def make_simulation(self, z_deploy_drogue):
+        """
+
+        :param self:
+        """
+
+        mass_payload = float(self.mass_payload.get())
+        cd0_rocket = float( self.cd0_rocket.get())
+        cross_rocket = float(self.cross_rocket.get())
+        z0 = float(self.z0.get())
+        vx0 = float(self.vx0.get())
+        vz0 = float(self.vz0.get())
+        z_deploy_main = float(self.z_deploy_main.get())
+        final_v = float(self.final_v.get())
+
+        # First of all, create objects for both the drogue and main parachute
         if self.hemisflo_type_var.get() == 1:
             self.new_drogue = Hemisflo(z_deploy_drogue)
         else:
@@ -278,50 +343,19 @@ class Interface:
             print("Sorry, no other types of main parachutes are implemented at the moment\n")
 
         self.new_mainpara.required_S0(final_v, mass_payload, z=0.0, option=1)
-        # Quick check if the resultind dimension of the mainpara is feasible
 
         self.new_mainpara.compute_porosity(type_chute=2)
 
         self.new_rocket = Rocket(cd0_rocket, mass_payload + 0.01 * mass_payload,
                                  cross_rocket)  # cd0 rocket, mass of rocket, cross-section
 
-        t_max = 1000.0   # [s] upper bound for duration of reentry. (For comparison, 150 s is a likely value)
-        x0 = 0.0         # [m] the origin of the frame of reference is on the vertical of the apogee
+        t_max = 1000.0  # [s] upper bound for duration of reentry. (For comparison, 150 s is a likely value)
+        x0 = 0.0  # [m] the origin of the frame of reference is on the vertical of the apogee
         self.dynamics_obj = DynamicsReentry(t_max, x0, z0 * 1e3, vx0, vz0, self.new_mainpara,
                                             self.new_drogue,
                                             self.new_rocket)  # final_time, x0, z0, vx0, vz0, objects)
 
-        self.window.destroy()
-
-        def make_simulation(self):
-
-            if self.hemisflo_type_var.get() == 1:
-                self.new_drogue = Hemisflo(z_deploy_drogue)
-            else:
-                print("Sorry, no other types of drogue parachutes are implemented at the moment\n")
-
-            mach_after_drogue = 0.4
-            self.new_drogue.required_S0(mach_after_drogue, mass_payload, z_deploy_main, option=2)
-            self.new_drogue.compute_porosity(type_chute=3)
-
-            if self.conical_ribbon_type_var.get() == 1:
-                self.new_mainpara = ConicalRibbon(z_deploy_main)  # conical ribbon parachute
-            else:
-                print("Sorry, no other types of main parachutes are implemented at the moment\n")
-
-            self.new_mainpara.required_S0(final_v, mass_payload, z=0.0, option=1)
-            # Quick check if the resultind dimension of the mainpara is feasible
-
-            self.new_mainpara.compute_porosity(type_chute=2)
-
-            self.new_rocket = Rocket(cd0_rocket, mass_payload + 0.01 * mass_payload,
-                                     cross_rocket)  # cd0 rocket, mass of rocket, cross-section
-
-            t_max = 1000.0  # [s] upper bound for duration of reentry. (For comparison, 150 s is a likely value)
-            x0 = 0.0  # [m] the origin of the frame of reference is on the vertical of the apogee
-            self.dynamics_obj = DynamicsReentry(t_max, x0, z0 * 1e3, vx0, vz0, self.new_mainpara,
-                                                self.new_drogue,
-                                                self.new_rocket)  # final_time, x0, z0, vx0, vz0, objects)
-
-            self.window.destroy()
+        self.dynamics_obj.solve_dynamics()
+        outdy = OutputDynamics(self.new_mainpara, self.new_drogue, self.new_rocket, self.dynamics_obj, final_v)
+        outdy.write_dynamics()
 

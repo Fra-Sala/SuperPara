@@ -1,0 +1,16 @@
+ -------- DYNAMICS ROUTINE --------
+
+Initial conditions:
+	 z0 = 100.000 [km] (initial altitude)	 vx0 = 200.000 [m/s] (initial horizontal velocity)	 vz0 = 0.000 [m/s] (initial vertical velocity)	 vz_final = 20.000 [m/s] (desired final descent rate)
+
+ Here are the relevant quantities for each possible altitude of drogue deployment. Use these to select an altitude for the deployment of the drogue. For deployment of main, z = 500 m should be a reasonable initial guess.
+
+	 Maximum deceleration: 24.313 g
+	Mach number at drogue deployment: 3.715
+ 	 Opening load (drogue): 12717.454 [N]
+	>>>> WARNING: the opening load for the drogue parachute could be excessive. Consider changing some input value!
+	 Opening load (main): 37426.114 [N]
+	>>>> WARNING: the opening load for the main parachute could be excessive. Consider changing some input value!
+	 Constructed surface of drogue parachute = 0.210 [m^2]
+	 Constructed surface of main parachute = 6.407 [m^2]
+	 Total time for reeentry: 181.08 [s]
