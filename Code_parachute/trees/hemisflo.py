@@ -86,7 +86,7 @@ class Hemisflo(Parachute):
                 # If the inflation has not occurred yet, then it is taking place at this precise instant t
                 self.flag_infl = 1
                 self.t_infl = t
-                print("The inflation of the hemisflo takes place at v = %.2f, mach = %,2f", v, mach)
+                #print("The inflation of the hemisflo takes place at v = %.2f, mach = %,2f", v, mach)
                 self.compute_delta_t_infl(v)
                 self.compute_opening_load(z, v)
                 self.slope_infl = (self.cd) * (self.surface) / self.delta_t_infl
