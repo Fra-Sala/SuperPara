@@ -4,8 +4,17 @@ import numpy as np
 
 
 def model(t, y, mainparaObj, drogueObj, rocketObj):
-    """This is the implementation of the dynamical model of the problem.
-        It simulates the reentry from an altitude of a payload, and the opening of a drogue chute and a main parachute."""
+    """
+        Implementation of the dynamical model of the problem.
+        Simulates the reentry from an altitude of a payload and the opening of a drogue chute and a main parachute.
+
+        :param t: Current time.
+        :param y: Current state vector [z, vz, x, vx].
+        :param mainparaObj: Object of the class MainPara representing main parachute parameters.
+        :param drogueObj: Object of the class Drogue representing drogue parachute parameters.
+        :param rocketObj: Object of the class Rocket representing rocket parameters.
+        :return: The derivative of the state vector [dz/dt, dvz/dt, dx/dt, dvx/dt].
+    """
 
     z, vz, x, vx = y  # retrieve current values of z, vz, x, vx
     z76 = coesa76(z / 1000)  # change the altitude to km

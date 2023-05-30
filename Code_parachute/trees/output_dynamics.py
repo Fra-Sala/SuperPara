@@ -4,8 +4,14 @@ from constants import *
 from pyatmos import coesa76
 
 class OutputDynamics:
+    """
+        Class for writing output data and results of the dynamics simulation.
+    """
 
     def __init__(self):
+        """
+            Initializes an OutputDynamics object.
+        """
         self.mainpara = None
         self.drogue = None
         self.rocket = None
@@ -17,8 +23,8 @@ class OutputDynamics:
 
     def write_dynamics(self):
         """
+            Writes the output data and results of the dynamics simulation to a file.
 
-        :rtype: None
         """
         self.mainpara.create_design()
         self.drogue.create_design()
@@ -57,8 +63,8 @@ class OutputDynamics:
             # We now compute the maximum stagnation temperature
             T_deploy = coesa76(self.drogue.z_deploy/1000).T
             T_max = T_deploy*(1+max_mach**2*(GAMMA-1)/2)
-            file.write("\tMaximum stagnation temperature: {:.3f} [K]\n\n".format(
-                float(T_max)))
+            # file.write("\tMaximum stagnation temperature: {:.3f} [K]\n\n".format(
+            #     float(T_max)))
 
 
             file.write("\tOpening load (drogue): {:.3f} [N]\n\n".format(self.drogue.opening_force))

@@ -8,17 +8,18 @@ from model import model
 class DynamicsReentry:
 
     def __init__(self, final_time, x0, z0, vx0, vz0, mainpara_obj, drogue_obj, rocket_obj):
-        """Constructor of object DynamicsReentry. The reentry of the rocket is modelled as a 2D
-            motion (planar), described by the x-z plane. The equation of motion are:
-            \begin{cases}
+        """
+            Constructor of object DynamicsReentry.
 
-
-            \end{cases}
-
-            The members are:
-            t_vect: numpy array of the discretized times
-            x_vect: numpy array of the x-positioin"""
-
+            :param final_time: Final time for the simulation.
+            :param x0: Initial x-coordinate of the rocket.
+            :param z0: Initial z-coordinate of the rocket.
+            :param vx0: Initial velocity in the x-direction.
+            :param vz0: Initial velocity in the z-direction.
+            :param mainpara_obj: Object of the class MainPara representing main parachute parameters.
+            :param drogue_obj: Object of the class Drogue representing drogue parachute parameters.
+            :param rocket_obj: Object of the class Rocket representing rocket parameters.
+        """
         self.t_vect = np.linspace(0, final_time, int(1e4))
         self.z_vect = [z0, ]
         self.x_vect = [x0]
@@ -33,6 +34,10 @@ class DynamicsReentry:
         self.mach_vect = []
 
     def solve_dynamics(self, ):
+        """
+            Solve the dynamics of the rocket during reentry.
+        """
+
         y0 = [self.z_vect[0], self.vz_vect[0], self.x_vect[0], self.vx_vect[0]]
 
         def hit_ground(t, y, arg1, arg2, arg3):

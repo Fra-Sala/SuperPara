@@ -15,26 +15,6 @@ def run_all():
     window = ctk.CTk()
     gui = Interface(window)
     window.mainloop()
-    # new_drogue = gui.new_drogue
-    # new_mainpara = gui.new_mainpara
-    # new_rocket = gui.new_rocket
-    # dynamics_obj = gui.dynamics_obj
-    # dynamics_obj.solve_dynamics()
-    # plot_animate_obj = PlotAnimate(dynamics_obj)
-    #
-    # # Plot a couple of graphs
-    #
-    # plot_animate_obj.plot_coord()
-    # plot_animate_obj.plot_dynamics()
-    #
-    # if gui.show_animation_var.get() == 1:
-    #     speed_animation = 30
-    #     if speed_animation < 1:
-    #         print("Please enter a speed for the animation >= 1 (e.g. 20)\n")
-    #     plot_animate_obj.animate_reentry(speed_animation)
-    #
-    # mkds = MakeDesign(new_mainpara, new_drogue, new_rocket, dynamics_obj)
-    # mkds.write_text()
 
 
 def run_mock():
@@ -65,7 +45,7 @@ def run_mock():
 
 if __name__ == "__main__":
 
-    test = 0
+    test = 0   # if test = 1, a mock simulation will be run without prompting the GUI
     if test == 0:
         run_all()
     else:

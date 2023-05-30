@@ -2,13 +2,20 @@ from abc import abstractmethod
 from constants import *
 from pyatmos import coesa76
 import numpy as np
-import pandas as pd
 
 class Parachute:
 
     def __init__(self, cd0_parachute, z_deploy, x1_factor, cx_factor, type_string):
 
-        """Constuctor for object Parachute"""
+        """
+            Constructor for the Parachute object.
+
+            :param cd0_parachute: Drag coefficient related to the parachute's surface area.
+            :param z_deploy: Altitude of parachute deployment.
+            :param x1_factor: X1 factor for parachute design.
+            :param cx_factor: CX factor for parachute design.
+            :param type_string: Name of the type of parachute.
+        """
         self.drag_area = 0.0
         self.cd0 = cd0_parachute
         self.cd = 0.0
@@ -24,32 +31,50 @@ class Parachute:
         self.cx_factor = cx_factor   #  default value based on reasonable value suggested by Kancke (see 7.39)
         self.opening_force = 0.0
         self.type_chute = type_string  # store the name of the type of parachute (e.g. "hemisflo", "conical ribbon",)
-        self.suspension_lines = 0.0
-        self.D_0 = 0.0
-        self.D_p = 0.0       # diameter after inflation
+        self.suspension_lines = None
+        self.D_0 = None
+        self.D_p = None      # diameter after inflation
 
 
     @abstractmethod
     def compute_cd(self, mach):
+        """
+            Abstract method to compute the drag coefficient based on the Mach number.
+
+            :param mach: Mach number.
+        """
         pass
 
     @abstractmethod
     def compute_delta_t_infl(self, v):
+        """
+          Abstract method to compute the time required for inflation based on the velocity.
+
+          :param v: Velocity.
+        """
         pass
 
     @abstractmethod
     def compute_dragArea_chute(self, t, z, v, mach):
+
+        """
+          Abstract method to compute the drag area of the parachute based on time, altitude, velocity, and Mach number.
+
+          :param t: Time.
+          :param z: Altitude.
+          :param v: Velocity.
+          :param mach: Mach number.
+        """
         pass
 
     def compute_opening_load(self, z, v):
         """
-        This method computes a likely value of the force at parachute deployment.
-        The used formula is given by Knacke's book, see pages 5-53 5-54.
-        The member *self.opening_force* is set accordingly.
+            This method computes a likely value of the force at parachute deployment.
+            The used formula is given by Knacke's book, see report.
+            The member *self.opening_force* is set accordingly.
 
-        :param z : current altitude
-        :param v : current velocity
-
+            :param z: Current altitude.
+            :param v: Current velocity.
         """
         rho = coesa76(z / 1000).rho
         self.opening_force = float(self.cd * self.surface * (
@@ -59,18 +84,14 @@ class Parachute:
     def required_S0(self, val_max, mass, z, option):
 
         """
-        This method computes the necessary nominal canopy area for both the main
-        and the drogue parachute. For the main, given a desired final descent rate,
-        we compute *self.surface* as shown in Knacke's book, page 7-37. For the drogue, we start
-        from the Mach at which we want to deploy the main parachute, we then recover the corresponding
-        velocity at the altitude for the deployment of the main, and hence we compute with the same
-        procedure the value of *self.surface* for the drogue itself.
+           This method computes the necessary nominal canopy area for both the main
+           and the drogue parachute.
 
-        :param val_max : either the final descent velocity that the main parachute must reach (option == 1)
-        or the Mach number that the drogue chute must reach for the deployment of the main (option == 2)
-        :param mass : mass of payload [kg]
-        :param z : current altitude [m]
-        :param option: int, 1 or 2
+           :param val_max: Either the final descent velocity that the main parachute must reach (option == 1)
+                           or the Mach number that the drogue chute must reach for the deployment of the main (option == 2)
+           :param mass: Mass of the payload [kg].
+           :param z: Current altitude [m].
+           :param option: 1 or 2. Option 1 calculates for the main parachute, option 2 calculates for the drogue parachute.
         """
 
         if option == 1: # in this case, val_max is the final descent velocity required (for the main parachute)
@@ -88,14 +109,10 @@ class Parachute:
 
     def compute_porosity(self, type_chute):
         """
-        This function interpolates the plot 6-23 in Knacke's book to compute
-        the required total porosity for a given application. The parameter *type_chute*
-        selects the right curve from the plot, depending on the type of parachute employed.
-        See table 6-3 in Knacke for details about different applications.
-        It requires access to the directory Porosity_plot which contains the csv files of the digitised
-        plot.
+            This function interpolates the plot 6-23 in Knacke's book to compute
+            the required total porosity for a given application.
 
-        :param type_chute: int. 2-> stabilization chute, 3-> drogue chute.
+            :param type_chute: 2 -> stabilization chute, 3 -> drogue chute.
         """
         D0_feet = np.sqrt(4*self.surface/np.pi)*3.281  # [ft] D0 in feet
         if type_chute == 3: # drogue
@@ -107,8 +124,16 @@ class Parachute:
 
     @abstractmethod
     def create_design(self):
+        """
+            Abstract method to create the parachute design.
+        """
         pass
 
     @abstractmethod
     def write_out(self, file):
+        """
+           Abstract method to write the parachute design to a file.
+
+           :param file: File object to write the design to.
+        """
         pass

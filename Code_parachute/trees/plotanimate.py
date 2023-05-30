@@ -18,13 +18,24 @@ plt.rcParams.update({
 
 
 class PlotAnimate:
-    """Class to plot the solution and relevant data"""
+    """
+        Class to plot the solution and other data of the reentry of the payload.
+    """
 
     def __init__(self, dynamics_obj):
-        """Constructor for this object, which allows to plot and animate the solution of the falling object"""
+        """
+            Constructor.
+
+            :param dynamics_obj: An object of the DynamicsReentry class representing the dynamics simulation.
+            """
         self.dynamics = dynamics_obj
 
     def plot_coord(self):
+        """
+           Plots the horizontal position, altitude, and falling trajectory of the object over time.
+
+           :return: None
+        """
         plt.figure(1)
         plt.subplot(131)
         plt.plot(self.dynamics.t_vect, self.dynamics.x_vect, "b-", lw=2)
@@ -49,6 +60,12 @@ class PlotAnimate:
         plt.show()
 
     def plot_dynamics(self):
+
+        """
+           Plots the velocity components, number of g's, and Mach number of the object over time.
+
+           :return: None
+        """
         plt.figure(1)
         plt.subplot(141)
         plt.plot(self.dynamics.t_vect, self.dynamics.vx_vect, "b-", lw=2)
@@ -80,6 +97,13 @@ class PlotAnimate:
         plt.show()
 
     def animate_reentry(self, speed=20):
+
+        """
+            Animates the reentry of the object and displays relevant information at each frame.
+
+            :param speed: Animation speed (default: 20).
+
+        """
         fig2 = plt.figure(2)
         ax = plt.axes(xlim=(0, self.dynamics.z_vect[0]),
                       ylim=(0, self.dynamics.z_vect[0]))

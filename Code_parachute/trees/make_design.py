@@ -4,18 +4,31 @@ from parachute import Parachute
 
 class MakeDesign:
 
+    """
+        A class to print to a text file the design of the simulation and of the drogue design.
+    """
+
     def __init__(self, mainpara, drogue, rocket, dynamics_obj):
+
+        """
+            Initializes a MakeDesign object.
+
+            :param mainpara: the main parachute object.
+            :param drogue: the drogue parachute object.
+            :param rocket: the rocket object (not used in the current implementation).
+            :param dynamics_obj: the dynamics object containing simulation results.
+        """
 
         self.mainpara = mainpara
         self.drogue = drogue
-        self.rocket = rocket
+        # self.rocket = rocket
         self.dynamics_obj = dynamics_obj
         self.filename = "OUTPUT_DESIGN"
 
     def write_text(self):
         """
+            This function writes the design information to a text file.
 
-        :rtype: None
         """
         self.mainpara.create_design()
         self.drogue.create_design()
@@ -23,7 +36,7 @@ class MakeDesign:
         with open(self.filename, 'w') as file:
             file.write(" -------- SUPERSONIC DESIGN PRELIMINARY PARACHUTE -------\n")
 
-            file.write("\n\n 1. DROGUE DESIGN\n\n")
+            file.write("\n\n DROGUE DESIGN\n\n")
             file.write("You selected a " + self.drogue.type_chute + " parachute.\n\n")
             if self.dynamics_obj.mach_vect[np.where(self.dynamics_obj.t_vect == self.drogue.t_infl)] > 1:
                 file.write(

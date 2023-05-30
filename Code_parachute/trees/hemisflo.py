@@ -4,9 +4,17 @@ import numpy as np
 
 
 class Hemisflo(Parachute):
-    """Class Hemisflo. It contains all the parameters that characterize the preliminary design of the hemisflo drouge parachute"""
+    """Class Hemisflo. It contains all the parameters that characterize the preliminary design of the hemisflo drogue parachute"""
 
     def __init__(self, z_deploy, x1_factor=0.95, cx_factor=1.25):
+
+        """
+           Constructor for the Hemisflo class.
+
+           :param z_deploy: Deployment altitude [m].
+           :param x1_factor: X1 factor for the parachute (default value: 0.95).
+           :param cx_factor: CX factor for the parachute (default value: 1.25).
+        """
         # default values for the factors are taken from Knacke's book
         cd0_parachute = 0.35
         type_str = "hemisflo"
@@ -26,9 +34,9 @@ class Hemisflo(Parachute):
 
         # Initially unknown values:
         #
-        self.D0 = None
-        self.suspension_lines = None
-        self.D_p = None
+        # self.D0 = None
+        # self.suspension_lines = None
+        # self.D_p = None
         self.gamma = None
         self.D = None
         self.r = None
@@ -50,9 +58,14 @@ class Hemisflo(Parachute):
 
     def compute_cd(self, mach):
 
-        """ This function returns a plausible value of the drag coefficient for a hemisflo parachute
-                operating at M >> 0.3 (compressibility effects not negligible). The implemented law
-                 is taken from the plot in "Parachute recovery systems design manual", Section 5"""
+        """
+            This function returns a plausible value of the drag coefficient for a hemisflo parachute
+            operating at M >> 0.3 (compressibility effects not negligible). The implemented law
+            is taken from the plot in "Parachute recovery systems design manual", Section 5.
+
+            :param mach: current Mach number.
+
+        """
 
         if mach < 1.9:
             self.cd = 0.35
@@ -61,22 +74,22 @@ class Hemisflo(Parachute):
 
     def compute_delta_t_infl(self, v):
         """
-        This method overrides mother-method. It computes the delta time for the
-        inflation of a ribbon parachute. The used empirical formula depends
-        on the type of parachute. See Knacke's book page 5-42 for details.
-        :param v: current velocity [m/s]
-
+            This method overrides mother-method. It computes the delta time for the
+            inflation of a ribbon parachute. The used empirical formula depends
+            on the type of parachute. See Knacke's book page 5-42 for details.
+            :param v: current velocity [m/s].
 
         """
         self.delta_t_infl = 0.65 * self.lambda_t * 2 * np.sqrt(self.surface / (np.pi)) / np.abs(v)
 
     def compute_dragArea_chute(self, t, z, v, mach):
         """
+           Calculate the drag area of the parachute at a given time.
 
-        :param t: current instant of time [s]
-        :param z: current altitude [m]
-        :param v: current velocity [m/s]
-        :param mach: current Mach number
+           :param t: Current instant of time [s].
+           :param z: Current altitude [m].
+           :param v: Current velocity [m/s].
+           :param mach: Current Mach number.
         """
         self.compute_cd(mach)
 
@@ -98,8 +111,8 @@ class Hemisflo(Parachute):
 
     def create_design(self):
         """
-            This function computes the design specifications of the drogue parachute (such as the length of
-            the suspension lines, number of gores, etc.)
+            Compute the design specifications of the drogue parachute.
+            This function calculates various geometric parameters and updates the attributes of the parachute object.
 
         """
 
@@ -168,7 +181,7 @@ class Hemisflo(Parachute):
         err_vect = np.zeros_like(n_HR_vect)
         j = 0
         for i in n_HR_vect:
-            err_vect[j] = compute_porosity(self.lambda_t, int(i))
+            err_vect[j] = compute_porosity((self.lambda_t-self.lambda_material), int(i))
             j = j + 1
         n_HR = int(n_HR_vect[err_vect.argmin()])
 
@@ -221,6 +234,12 @@ class Hemisflo(Parachute):
         self.vent_open_area = vent_open_area
 
     def write_out(self, file):
+
+        """
+            Write the design specifications of the drogue parachute to a file.
+
+            :param file: File object to write the specifications to.
+        """
 
         file.write("\tA_0 = {:.3f} [m^2] (open area of a gore including vent area)\n\n".format(float(self.A_0)))
         file.write(

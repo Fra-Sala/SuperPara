@@ -14,8 +14,19 @@ ctk.set_appearance_mode("light")
 
 class Interface:
 
+    """
+        A class to manage the GUI. Its methods take care of assembling the dynamics objects and solving the dynamics.
+    """
+
     def __init__(self, master):
 
+        """
+            Constructor for the class. Initializes the instance variables and sets up the GUI elements.
+
+            :param master: The master widget (the main window of the GUI).
+        """
+
+        #Initialize instance variables
         self.mass = 0.0
         self.cd_rocket = 0.0
         self.rocket_cross_section = 0.0
@@ -28,8 +39,8 @@ class Interface:
         self.window = master
         self.window.geometry('800x500')
         self.window.resizable(False, False)
-        self.window.title("SUPERSONIC PARACHUTE DESIGN TOOL")
-        self.window.option_add('*Font', 'Arial 30')  # set font as Arial 20
+        self.window.title("SUPERPARA DESIGN TOOL")
+        self.window.option_add('*Font', 'Arial 30')
 
         self.label_rocket = ctk.CTkLabel(self.window, text="ROCKET PARAMETERS", font=("Times New Roman", 18, "bold"))
         self.label_rocket.grid(column=0, row=0)
@@ -155,6 +166,12 @@ class Interface:
         self.dynamics_obj = None
 
     def show_iterate(self):
+        """
+            This method is called when the user selects the iterate option. It shows or hides the input fields based on the selected
+            option.
+
+        """
+
 
         if self.option_iterate_var.get() == 1:
             self.label_first_z_iterate.grid(row=4, column=2)
@@ -180,6 +197,12 @@ class Interface:
             self.n_iterations.grid_forget()
 
     def run_button(self):
+
+        """
+            This function is triggered when the "Run" button is clicked by the user. It performs the necessary validations on the input values
+            and executes the simulation based on the selected options (i.e. it either iterates the dynamics or solves it only once).
+
+        """
 
         text_mass_payload = self.mass_payload.get()
         text_cd0_rocket = self.cd0_rocket.get()
@@ -319,8 +342,11 @@ class Interface:
 
     def make_simulation(self, z_deploy_drogue, pos, outdy):
         """
+            This function performs a simulation of a rocket reentry using the provided parameters.
 
-        :param self:
+            :param z_deploy_drogue: the altitude at which the drogue parachute is deployed.
+            :param pos: the position in the (eventual) array of altitudes, when iterating.
+            :param outdy: the output dynamics object.
         """
 
         mass_payload = float(self.mass_payload.get())
