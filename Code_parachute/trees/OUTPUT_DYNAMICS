@@ -6,7 +6,7 @@
 
 	 vx0 = 300.000 [m/s] (initial horizontal velocity)
 
-	 vz0 = 100.000 [m/s] (initial vertical velocity)
+	 vz0 = 0.000 [m/s] (initial vertical velocity)
 
 	 vz_final = 20.000 [m/s] (desired final descent rate)
 
@@ -16,49 +16,19 @@ Here are listed relevant quantities for each possible altitude of drogue deploym
 
 
 
----------------------------ITERATION #1,  Z DEPLOYMENT DROGUE = 3000.00 [m] -------------------------------
+---------------------------ITERATION #1,  Z DEPLOYMENT DROGUE = 6000.00 [m] -------------------------------
 
-	Maximum deceleration: 96.58 g
+	Maximum deceleration: 30.23 g
 
-		>>>> WARNING: the maximum deceleration is excessive. Consider changing some input value!
+	Mach number at drogue deployment: 3.487
 
-	Mach number at drogue deployment: 3.023
+	Opening load (drogue): 17371.211 [N]
 
-	Opening load (drogue): 25171.477 [N]
-
-		>>>> WARNING: the opening load for the drogue parachute could be excessive. Consider changing some input value!
-
-	Opening load (main): 155462.861 [N]
-
-		>>>> WARNING: the opening load for the main parachute could be excessive. Consider changing some input value!
+	Opening load (main): 46984.612 [N]
 
 	Constructed surface of drogue parachute = 0.210 [m^2]
 
 	Constructed surface of main parachute = 6.407 [m^2]
 
-	Total time for reentry: 177.41 [s]
-
-
-
----------------------------ITERATION #2,  Z DEPLOYMENT DROGUE = 2000.00 [m] -------------------------------
-
-	Maximum deceleration: 202.29 g
-
-		>>>> WARNING: the maximum deceleration is excessive. Consider changing some input value!
-
-	Mach number at drogue deployment: 2.848
-
-	Opening load (drogue): 27507.825 [N]
-
-		>>>> WARNING: the opening load for the drogue parachute could be excessive. Consider changing some input value!
-
-	Opening load (main): 336435.278 [N]
-
-		>>>> WARNING: the opening load for the main parachute could be excessive. Consider changing some input value!
-
-	Constructed surface of drogue parachute = 0.210 [m^2]
-
-	Constructed surface of main parachute = 6.407 [m^2]
-
-	Total time for reentry: 175.29 [s]
+	Total time for reentry: 175.58 [s]
 
