@@ -1,0 +1,120 @@
+ ------------------- DYNAMICS ROUTINE -------------------
+
+ ---- Initial conditions: ----
+
+	 z0 = 100.000 [km] (initial altitude)
+
+	 vx0 = 300.000 [m/s] (initial horizontal velocity)
+
+	 vz0 = 0.000 [m/s] (initial vertical velocity)
+
+	 vz_final = 20.000 [m/s] (desired final descent rate)
+
+
+
+Here are listed relevant quantities for each possible altitude of drogue deployment. Use these to select an altitude for the deployment of the drogue. (For deployment of the main parachute, z = 500 m should be a reasonable initial guess).
+
+
+
+---------------------------ITERATION #1,  Z DEPLOYMENT DROGUE = 6000.00 [m] -------------------------------
+
+	Maximum deceleration: 30.23 g
+
+	Mach number at drogue deployment: 3.487
+
+	Opening load (drogue): 17371.211 [N]
+
+	Opening load (main): 46984.612 [N]
+
+	Constructed surface of drogue parachute = 0.210 [m^2]
+
+	Constructed surface of main parachute = 6.407 [m^2]
+
+	Total time for reentry: 175.58 [s]
+
+
+
+---------------------------ITERATION #2,  Z DEPLOYMENT DROGUE = 5500.00 [m] -------------------------------
+
+	Maximum deceleration: 33.63 g
+
+	Mach number at drogue deployment: 3.412
+
+	Opening load (drogue): 18691.767 [N]
+
+	Opening load (main): 52438.803 [N]
+
+		>>>> WARNING: the opening load for the main parachute could be excessive. Consider changing some input value!
+
+	Constructed surface of drogue parachute = 0.210 [m^2]
+
+	Constructed surface of main parachute = 6.407 [m^2]
+
+	Total time for reentry: 174.00 [s]
+
+
+
+---------------------------ITERATION #3,  Z DEPLOYMENT DROGUE = 5000.00 [m] -------------------------------
+
+	Maximum deceleration: 38.27 g
+
+	Mach number at drogue deployment: 3.338
+
+	Opening load (drogue): 19970.627 [N]
+
+	Opening load (main): 59918.490 [N]
+
+		>>>> WARNING: the opening load for the main parachute could be excessive. Consider changing some input value!
+
+	Constructed surface of drogue parachute = 0.210 [m^2]
+
+	Constructed surface of main parachute = 6.407 [m^2]
+
+	Total time for reentry: 172.45 [s]
+
+
+
+---------------------------ITERATION #4,  Z DEPLOYMENT DROGUE = 4500.00 [m] -------------------------------
+
+	Maximum deceleration: 45.18 g
+
+	Mach number at drogue deployment: 3.261
+
+	Opening load (drogue): 21277.271 [N]
+
+		>>>> WARNING: the opening load for the drogue parachute could be excessive. Consider changing some input value!
+
+	Opening load (main): 71094.176 [N]
+
+		>>>> WARNING: the opening load for the main parachute could be excessive. Consider changing some input value!
+
+	Constructed surface of drogue parachute = 0.210 [m^2]
+
+	Constructed surface of main parachute = 6.407 [m^2]
+
+	Total time for reentry: 170.96 [s]
+
+
+
+---------------------------ITERATION #5,  Z DEPLOYMENT DROGUE = 4000.00 [m] -------------------------------
+
+	Maximum deceleration: 55.66 g
+
+		>>>> WARNING: the maximum deceleration is excessive. Consider changing some input value!
+
+	Mach number at drogue deployment: 3.181
+
+	Opening load (drogue): 22595.973 [N]
+
+		>>>> WARNING: the opening load for the drogue parachute could be excessive. Consider changing some input value!
+
+	Opening load (main): 88107.246 [N]
+
+		>>>> WARNING: the opening load for the main parachute could be excessive. Consider changing some input value!
+
+	Constructed surface of drogue parachute = 0.210 [m^2]
+
+	Constructed surface of main parachute = 6.407 [m^2]
+
+	Total time for reentry: 169.52 [s]
+

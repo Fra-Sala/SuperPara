@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dynamics &#8212; SuperPara 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for dynamics</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">constants</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">pyatmos</span> <span class="kn">import</span> <span class="n">coesa76</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">solve_ivp</span>
+<span class="kn">from</span> <span class="nn">model</span> <span class="kn">import</span> <span class="n">model</span>
+
+
+<div class="viewcode-block" id="DynamicsReentry"><a class="viewcode-back" href="../dynamics.html#dynamics.DynamicsReentry">[docs]</a><span class="k">class</span> <span class="nc">DynamicsReentry</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">final_time</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">z0</span><span class="p">,</span> <span class="n">vx0</span><span class="p">,</span> <span class="n">vz0</span><span class="p">,</span> <span class="n">mainpara_obj</span><span class="p">,</span> <span class="n">drogue_obj</span><span class="p">,</span> <span class="n">rocket_obj</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Constructor of object DynamicsReentry.</span>
+
+<span class="sd">            :param final_time: Final time for the simulation.</span>
+<span class="sd">            :param x0: Initial x-coordinate of the rocket.</span>
+<span class="sd">            :param z0: Initial z-coordinate of the rocket.</span>
+<span class="sd">            :param vx0: Initial velocity in the x-direction.</span>
+<span class="sd">            :param vz0: Initial velocity in the z-direction.</span>
+<span class="sd">            :param mainpara_obj: Object of the class MainPara representing main parachute parameters.</span>
+<span class="sd">            :param drogue_obj: Object of the class Drogue representing drogue parachute parameters.</span>
+<span class="sd">            :param rocket_obj: Object of the class Rocket representing rocket parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t_vect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">final_time</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_vect</span> <span class="o">=</span> <span class="p">[</span><span class="n">z0</span><span class="p">,</span> <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_vect</span> <span class="o">=</span> <span class="p">[</span><span class="n">x0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vx_vect</span> <span class="o">=</span> <span class="p">[</span><span class="n">vx0</span><span class="p">,</span> <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vz_vect</span> <span class="o">=</span> <span class="p">[</span><span class="n">vz0</span><span class="p">,</span> <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drogue</span> <span class="o">=</span> <span class="n">drogue_obj</span>  <span class="c1"># drogue_parachute is an object of the class Drogue</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rocket</span> <span class="o">=</span> <span class="n">rocket_obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mainpara</span> <span class="o">=</span> <span class="n">mainpara_obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">az_vect</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax_vect</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">g_vect</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mach_vect</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="DynamicsReentry.solve_dynamics"><a class="viewcode-back" href="../dynamics.html#dynamics.DynamicsReentry.solve_dynamics">[docs]</a>    <span class="k">def</span> <span class="nf">solve_dynamics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Solve the dynamics of the rocket during reentry.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">y0</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">z_vect</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">vz_vect</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_vect</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">vx_vect</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+        <span class="k">def</span> <span class="nf">hit_ground</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">arg3</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">hit_ground</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t_vect</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_vect</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="n">y0</span><span class="p">,</span> <span class="n">events</span><span class="o">=</span><span class="n">hit_ground</span><span class="p">,</span>
+                           <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mainpara</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">drogue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rocket</span><span class="p">),</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;LSODA&#39;</span><span class="p">,</span> <span class="n">first_step</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_step</span><span class="o">=</span><span class="mf">0.015</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t_vect</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">t</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_vect</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vz_vect</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_vect</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vx_vect</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">az_vect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vz_vect</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax_vect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vx_vect</span><span class="p">)</span>
+
+        <span class="c1"># 2nd order accuracy approximation of the derivative of the velocity (accelaration)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">az_vect</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">3</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">vz_vect</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">vz_vect</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vz_vect</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_vect</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_vect</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax_vect</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">3</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">vx_vect</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">vx_vect</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vx_vect</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_vect</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_vect</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">az_vect</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vz_vect</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vz_vect</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">t_vect</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_vect</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>  <span class="c1"># approximation of the acceleration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax_vect</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vx_vect</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vx_vect</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_vect</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_vect</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">az_vect</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">vz_vect</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">4</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">vz_vect</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">vz_vect</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">t_vect</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_vect</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax_vect</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">vx_vect</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">4</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">vx_vect</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">vx_vect</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">t_vect</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_vect</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">])</span>
+
+        <span class="c1"># 1st order accuracy</span>
+        <span class="c1"># self.az_vect[0:-1] = (self.vz_vect[1:] - self.vz_vect[0:-1]) /  (self.t_vect[1:] - self.t_vect[0:-1])</span>
+        <span class="c1"># self.ax_vect[0:-1] = (self.vx_vect[1:] - self.vx_vect[0:-1]) / (self.t_vect[1:] - self.t_vect[0:-1])</span>
+        <span class="c1"># self.az_vect[-1] = self.az_vect[-2]</span>
+        <span class="c1"># self.ax_vect[-1] = self.ax_vect[-2]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">g_vect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">az_vect</span> <span class="o">/</span> <span class="n">GRAVITY</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mach_vect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vx_vect</span><span class="p">[</span><span class="mi">0</span><span class="p">:]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">vz_vect</span><span class="p">[</span><span class="mi">0</span><span class="p">:]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">GAMMA</span> <span class="o">*</span> <span class="n">R_AIR</span> <span class="o">*</span> <span class="n">coesa76</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_vect</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">))</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">SuperPara</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">trees</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Francesco Sala.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

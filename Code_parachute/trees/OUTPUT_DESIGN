@@ -1,0 +1,64 @@
+ -------- SUPERSONIC DESIGN PRELIMINARY PARACHUTE -------
+
+
+ DROGUE DESIGN
+
+You selected a hemisflo parachute.
+
+The selected drogue parachute will be deployed in supersonic conditions, at Mach = 3.49
+
+Here are the design parameters for the drogue:
+
+
+	S0 = 0.210 [m^2] (total surface of constructed canopy)
+
+	D0 = 0.517 [m] (diameter of constructed canopy)
+
+	cd0 =     0.35 [-] (drag coeff. related to S0, low Mach) 
+
+	Δt =  0.00950 [s] (time required for inflation)
+
+	z_deploy =  6000.00 [m] (altitude of deployment)
+
+	λ_T =   29.052 % (total porosity)
+
+	F_x = 17371.211 [N] (inflation load)
+
+	cx factor =    1.250 
+
+	X1 factor =    0.950 
+
+	 ---- Specific values for this type of parachute ----
+
+	A_0 = 0.007 [m^2] (open area of a gore including vent area)
+
+	A_0H = 0.007 [m^2] (open area between horizontal ribbons of one gore)
+
+	D = 0.524 [m] (circumferential distance of the hemispherical part)
+
+	D_p = 0.338 [m] (diameter of the hemisphere after inflation)
+
+	e_gb = 0.128 [m] (gore width at skirt of hemispherical portion)
+
+	e_g2 = 0.122 [m] (gore width at skirt of the extension)
+
+	γ = 0.116 [rad] (angle between two adjacent suspension lines)
+
+	h_e = 0.052 [m] (height of the skirt extension measured along gore centerline)
+
+	h_max = 0.242 [m] (maximum height of a gore of the hemispherical part)
+
+	L_e = 1.034 [m] (Length of suspension lines)
+
+	L_v = 0.041 [m] (vent line length divided by two)
+
+	R_S = 0.052 [m] (height of space between horizontal ribbons)
+
+	S_01 = 0.158 [m^2] (area of the hemispherical portion of the canopy)
+
+	S_02 = 0.052 [m^2] (area of the skirt extension)
+
+	U_RS = 0.256 [m] (usable ribbon space)
+
+-------------------------------------------------
+

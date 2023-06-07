@@ -1,0 +1,258 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>plotanimate &#8212; SuperPara 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for plotanimate</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">animation</span>
+<span class="kn">from</span> <span class="nn">dynamics</span> <span class="kn">import</span> <span class="n">DynamicsReentry</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">rc</span>
+<span class="kn">from</span> <span class="nn">dynamics</span> <span class="kn">import</span> <span class="n">DynamicsReentry</span>
+<span class="kn">from</span> <span class="nn">parachute</span> <span class="kn">import</span> <span class="n">Parachute</span>
+<span class="kn">from</span> <span class="nn">hemisflo</span> <span class="kn">import</span> <span class="n">Hemisflo</span>
+<span class="kn">from</span> <span class="nn">pyatmos</span> <span class="kn">import</span> <span class="n">coesa76</span>
+<span class="kn">from</span> <span class="nn">constants</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">rc</span><span class="p">(</span><span class="s1">&#39;font&#39;</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s1">&#39;family&#39;</span><span class="p">:</span> <span class="s1">&#39;sans-serif&#39;</span><span class="p">,</span> <span class="s1">&#39;sans-serif&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">]})</span>
+<span class="n">rc</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">usetex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">usetex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+    <span class="s1">&#39;text.usetex&#39;</span><span class="p">:</span> <span class="kc">True</span>
+<span class="p">})</span>
+
+
+<div class="viewcode-block" id="PlotAnimate"><a class="viewcode-back" href="../plotanimate.html#plotanimate.PlotAnimate">[docs]</a><span class="k">class</span> <span class="nc">PlotAnimate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class to plot the solution and other data of the reentry of the payload.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dynamics_obj</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Constructor.</span>
+
+<span class="sd">            :param dynamics_obj: An object of the DynamicsReentry class representing the dynamics simulation.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span> <span class="o">=</span> <span class="n">dynamics_obj</span>
+
+<div class="viewcode-block" id="PlotAnimate.plot_coord"><a class="viewcode-back" href="../plotanimate.html#plotanimate.PlotAnimate.plot_coord">[docs]</a>    <span class="k">def</span> <span class="nf">plot_coord</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">           Plots the horizontal position, altitude, and falling trajectory of the object over time.</span>
+
+<span class="sd">           :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">131</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">t_vect</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">x_vect</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Horizontal position with time&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$t$ [s]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$x$ [m]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">132</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">t_vect</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">z_vect</span><span class="p">,</span> <span class="s2">&quot;g-&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Altitude with time&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$t$ [s]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$z$ [m]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">133</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">x_vect</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">z_vect</span><span class="p">,</span> <span class="s2">&quot;r--&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Falling trajectory&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$x$ [m]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$z$ [m]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PlotAnimate.plot_dynamics"><a class="viewcode-back" href="../plotanimate.html#plotanimate.PlotAnimate.plot_dynamics">[docs]</a>    <span class="k">def</span> <span class="nf">plot_dynamics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">           Plots the velocity components, number of g&#39;s, and Mach number of the object over time.</span>
+
+<span class="sd">           :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">141</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">t_vect</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">vx_vect</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Velocity component vx with time&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$t$ [s]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$x$ [m]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">142</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">t_vect</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">vz_vect</span><span class="p">,</span> <span class="s2">&quot;g-&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Velocity component vz with time&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$t$ [s]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$vz$ [m/s]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">143</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">t_vect</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">g_vect</span><span class="p">,</span> <span class="s2">&quot;r-&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Number of g&#39;&#39;s with time&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$t$ [s]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$g$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">144</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">t_vect</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">mach_vect</span><span class="p">,</span> <span class="s2">&quot;k-&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Mach number during reentry&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$t$ [s]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$M$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PlotAnimate.animate_reentry"><a class="viewcode-back" href="../plotanimate.html#plotanimate.PlotAnimate.animate_reentry">[docs]</a>    <span class="k">def</span> <span class="nf">animate_reentry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Animates the reentry of the object and displays relevant information at each frame.</span>
+
+<span class="sd">            :param speed: Animation speed (default: 20).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fig2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">z_vect</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                      <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">z_vect</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+        <span class="n">line</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="s2">&quot;k--&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">lineHead</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="s2">&quot;bo&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">title</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">1.05</span><span class="p">,</span> <span class="s1">&#39;Animation of the reentry of rocket and parachute dynamics&#39;</span><span class="p">,</span>
+                        <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">)</span> <span class="c1">#0, self.dynamics.z_vect[0]</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s1">&#39;Mach&#39;</span><span class="p">,</span>
+                       <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">init</span><span class="p">():</span>
+            <span class="n">line</span><span class="o">.</span><span class="n">set_data</span><span class="p">([],</span> <span class="p">[])</span>
+            <span class="n">lineHead</span><span class="o">.</span><span class="n">set_data</span><span class="p">([],</span> <span class="p">[])</span>
+            <span class="k">return</span> <span class="n">line</span><span class="p">,</span> <span class="n">lineHead</span><span class="p">,</span>
+
+        <span class="n">xdata</span><span class="p">,</span> <span class="n">zdata</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+
+        <span class="c1"># animation function</span>
+        <span class="k">def</span> <span class="nf">animate</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">speed</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">t_vect</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">drogue</span><span class="o">.</span><span class="n">t_infl</span><span class="p">):</span>
+                <span class="n">lineHead</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">t_vect</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">mainpara</span><span class="o">.</span><span class="n">t_infl</span><span class="p">):</span>
+                <span class="n">lineHead</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="s2">&quot;orange&quot;</span><span class="p">)</span>
+
+            <span class="n">line</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">x_vect</span><span class="p">[:</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">z_vect</span><span class="p">[:</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">lineHead</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">x_vect</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">z_vect</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">title</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s2">&quot;Reentry of rocket and parachute dynamics, t=</span><span class="si">{:5.1f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">t_vect</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">vx_vect</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">vz_vect</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">rho</span> <span class="o">=</span> <span class="n">coesa76</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">z_vect</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">rho</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="n">coesa76</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">z_vect</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+            <span class="n">mach</span> <span class="o">=</span> <span class="n">v</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">GAMMA</span> <span class="o">*</span> <span class="n">R_AIR</span> <span class="o">*</span> <span class="n">temp</span><span class="p">)</span>
+
+            <span class="c1"># info.set_text(&quot;v={:3.3f}, mach={:2.1f}, rho={:1.8f}, temp, opening force&quot;.format(v, mach, rho))</span>
+            <span class="c1"># info.set_text(&quot;mach, m={:2.1f}&quot;.format(mach))</span>
+            <span class="n">info</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span>
+                <span class="s2">&quot;Altitude: </span><span class="si">%.1f</span><span class="s2"> m</span><span class="se">\n</span><span class="s2"> Mach = </span><span class="si">%.2f</span><span class="se">\n</span><span class="s2"> ||v|| = </span><span class="si">%.2f</span><span class="s2"> m/s</span><span class="se">\n</span><span class="s2"> g = </span><span class="si">%.1f</span><span class="s2"> </span><span class="se">\n</span><span class="s2"> Opening force drogue = </span><span class="si">%.2f</span><span class="s2"> N </span><span class="se">\n</span><span class="s2">  Opening force main chute = </span><span class="si">%.2f</span><span class="s2"> N </span><span class="se">\n</span><span class="s2"> g_max = </span><span class="si">%.1f</span><span class="se">\n</span><span class="s2"> max Mach = </span><span class="si">%.2f</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">z_vect</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">mach</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">g_vect</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">drogue</span><span class="o">.</span><span class="n">opening_force</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">mainpara</span><span class="o">.</span><span class="n">opening_force</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">g_vect</span><span class="p">)),</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">mach_vect</span><span class="p">))))</span>
+            <span class="k">return</span> <span class="n">line</span><span class="p">,</span> <span class="n">lineHead</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span>
+
+        <span class="c1"># calling the animation function</span>
+
+        <span class="n">anim</span> <span class="o">=</span> <span class="n">animation</span><span class="o">.</span><span class="n">FuncAnimation</span><span class="p">(</span><span class="n">fig2</span><span class="p">,</span> <span class="n">animate</span><span class="p">,</span> <span class="n">init_func</span><span class="o">=</span><span class="n">init</span><span class="p">,</span> <span class="n">frames</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="o">.</span><span class="n">t_vect</span><span class="p">)</span> <span class="o">//</span> <span class="n">speed</span><span class="p">),</span>
+                                       <span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">SuperPara</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">trees</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Francesco Sala.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
