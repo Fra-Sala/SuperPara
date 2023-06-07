@@ -33,7 +33,7 @@ $ python3 main.py
 ```
  
 A GUI pops up. The user must fill in the empty fields regarding the rocket and the initial conditions for reentry.
-Then, the user must select between ``Iterate dynamics for different altitude of deployment of the drogue" or  ``Define altitude for drogue deployment and compute design".
+Then, the user must select between *Iterate dynamics for different altitude of deployment of the drogue* or  *Define altitude for drogue deployment and compute design*.
 The first choice will print to screen 3 new entries, z1,z2 and number of iterations n, that define a vector of altitudes an `numpy.linspace(z2,z1,n)`. In this case, when the code is run, a txt file `OUTPUT_DYNAMICS` is created: for each altitude of deployment, a few relevent values concerning the dynamics are printed, so as to guide the user through the choice of a suitable altitude.
 
 The second choice will instead allow the user to enter a single value for the altitude of deployment of the drogue: the iterative study must be carried out beforehand to define a suitable altitude of deployment. In this case, a txt file `OUTPUT_DESIGN` is created, containing all the information about the design of a hemisflo parachute.
