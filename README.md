@@ -26,6 +26,7 @@ The packages used by the project are the following:
  
  ## How to use the code
  
+ The code can be found in the folder `trees` inside `Code_parachute`. 
  The `main.py` must be run in a Python IDE (PyCharm, Spyder, etc.), or simply in the terminal:
  
  ```
@@ -46,7 +47,7 @@ Finally, the user must click on the button `RUN` to run the program. If the user
  ## Details about code and theoretical background
  
  For details about the logic that was followed for the implementation, or for the theoretical background, please refer to the final report.
- 
+ For the documentation of the code, the html created with `sphinx` can be found in the `docs/_build/html` folder.
  
  
 _Francesco Sala, June 2023_
