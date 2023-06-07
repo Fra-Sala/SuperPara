@@ -12,7 +12,7 @@ Please follow the provided instructions to run the code.
 To run this project, clone the repository:
 
 ```
-$ git clone https://github.com/Fra-Sala/Supersonic_parachute.git
+$ git clone https://github.com/Fra-Sala/SuperPara.git
 ```
 
 The packages used by the project are the following:
